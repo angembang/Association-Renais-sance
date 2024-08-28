@@ -17,6 +17,16 @@ class Donation
   private ?int $userId;
 
   /**
+   * @var string|null the first name of the donation. Null for anonymous donations or loggged user.
+   */ 
+  private ?string $firstName;
+
+   /**
+   * @var string|null the last name of the donation. Null for anonymous donations or loggged user.
+   */ 
+  private ?string $lastName;
+
+  /**
    * @var float The amount of the donation.
    */
   private float $amount;
@@ -44,8 +54,10 @@ class Donation
    * @param DateTime $donationDate The date when the donation was made.
    * @param string|null $message The message associated with the donation. Null if not provided.
    * @param bool $anonymous Whether the donation is anonymous.
+   * @param string|null $firstName The first name of the donation Null for anonymous donations or loggged user.
+   * @param string|null $firstName The first name of the donation Null for anonymous donations or loggged user.
    */
-  public function __construct(?int $id, ?int $userId, float $amount, DateTime $donationDate, ?string $message, bool $anonymous)
+  public function __construct(?int $id, ?int $userId, float $amount, DateTime $donationDate, ?string $message, bool $anonymous, ?string $lastName, ?string $firstName)
   {
     $this->id = $id;
     $this->userId = $userId;
@@ -53,6 +65,8 @@ class Donation
     $this->donationDate = $donationDate;
     $this->message = $message;
     $this->anonymous = $anonymous;
+    $this->firstName = $firstName;
+    $this->lastName = $lastName;
   }
 
   /**
@@ -171,6 +185,46 @@ class Donation
   public function setAnonymous(bool $anonymous): void 
   {
     $this->anonymous = $anonymous;
+  }
+
+
+   /**
+   * Get the first name of the user
+   * 
+   * @return string The first name of the user. 
+   */
+  public function getFirstName(): string 
+  {
+    return $this->firstName;
+  }
+
+  /**
+   * Set the first name of the user.
+   * @param string $firstName The first name of the user. 
+   */
+  public function setFirstName(string $firstName): void 
+  {
+    $this->firstName = $firstName;
+  }
+
+
+  /**
+   * Get the last name of the donation
+   * 
+   * @return string The last name of the donation. 
+   */
+  public function getLastName(): string 
+  {
+    return $this->lastName;
+  }
+
+  /**
+   * Set the last name of the donation.
+   * @param string $lastName The last name of the donation. 
+   */
+  public function setLastName(string $lastName): void 
+  {
+    $this->lastName = $lastName;
   }
   
 }

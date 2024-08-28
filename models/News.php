@@ -17,6 +17,11 @@ class News
   private string $title;
 
   /**
+   * @var string the excerpt of the news article.
+   */
+  private string $excerpt;
+
+  /**
    * @var string The content of the news article.
    */
   private string $content;
@@ -45,13 +50,14 @@ class News
    * News constructor
    * @param int|null $id The unique identifier of the news article. Null for a new article.
    * @param string $title The title of the news article.
+   * @param string $excerpt the excerpt of the news article.
    * @param string $content The content of the news article.
    * @param string|null $image The image associated with the news article. Null if no image is provided.
    * @param string|null $video The video associated with the news article. Null if no video is provided.
    * @param DateTime $publicationDate The publication date of the news article.
    * @param DateTime|null $updateDate The update date of the news article. Null if the article has not been updated.
    */
-  public function __construct(?int $id, string $title, string $content, ?string $image, ?string $video, DateTime $publicationDate, ?DateTime $updateDate)
+  public function __construct(?int $id, string $title, string $content, ?string $image, ?string $video, DateTime $publicationDate, ?DateTime $updateDate, string $excerpt)
   {
     $this->id = $id;
     $this->title = $title;
@@ -60,6 +66,7 @@ class News
     $this->video = $video;
     $this->publicationDate = $publicationDate;
     $this->updateDate = $updateDate;
+    $this->excerpt = $excerpt;
   }
 
   /**
@@ -200,5 +207,26 @@ class News
   {
     $this->updateDate = $updateDate;
   }
+
+
+  /**
+   * Get the excerpt of the news article.
+   * 
+   * @return string The excerpt of the news article. 
+   */
+  public function getExcerpt(): string
+  {
+    return $this->excerpt;
+  }
+
+  /**
+   * Set the excerpt of the news article.
+   * @param string $updateDate The excerpt of the news article. 
+   */
+  public function setExcerpt(string $excerpt): void 
+  {
+    $this->excerpt = $excerpt;
+  }
+
 
 }

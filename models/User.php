@@ -70,7 +70,7 @@ class User
    * @param DateTime $membershipDate The membership date of the user.
    * @param string $civility The civility of the user.
    */
-  public function __construct(?int $id, string $firstName, string $lastName, string $email, string $phone, string $password, int $roleId, string $address, DateTime $membershipDate, string $civility)
+  public function __construct(?int $id, string $lastName, string $firstName, string $email, string $phone, string $address, DateTime $membershipDate, string $civility, int $roleId, string $password)
   {
     $this->id = $id;
     $this->firstName = $firstName;
