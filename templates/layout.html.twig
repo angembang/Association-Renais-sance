@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+  <html lang="fr">
+    <head>
+      {% block head %}
+      <!-- Document metadata -->
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+      <!-- Title and Description -->
+      <title>Association Renais'sance</title>
+      <meta name="description" content="Plateforme de soutien et de réinsertion sociale pour les personnes en difficulté.">
+
+      <!-- Keywords for SEO -->
+      <meta name="keywords" content="association renaissance, réinsertion sociale, aide, soutien social, personnes en difficulté, ateliers de formation, solidarité, Rennes, France">
+
+      <!-- Author -->
+      <meta name="author" content="Association Renais'sance">
+
+      <!-- Social Media Integration -->
+      <meta property="og:title" content="Association Renais'sance">
+      <meta property="og:description" content="Plateforme de soutien et de réinsertion sociale pour les personnes en difficulté.">
+      <meta property="og:type" content="website">
+      <meta property="og:url" content="https://www.asso-renais-sance.fr">
+      <meta property="og:image" content="./assets/images/asso.png">
+      <meta property="og:site_name" content="Association Renais'sance">
+      <meta property="og:locale" content="fr_FR">
+
+      <!-- Twitter Card -->
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:title" content="Association Renais'sance">
+      <meta name="twitter:description" content="Plateforme de soutien et de réinsertion sociale pour les personnes en difficulté.">
+      <meta name="twitter:image" content="./assets/images/asso.png">
+      <meta name="twitter:site" content="@Asso-renais-sance">
+      <meta name="twitter:creator" content="@auteur">
+
+      <!-- Favicons -->
+      <link rel="icon" href="./assets/images/favicon.png" type="image/png">
+      <link rel="apple-touch-icon" href="./assets/images/favicon.png">
+
+      <!-- External stylesheet -->
+      <link rel="stylesheet" href="./assets/styles/css/style.css" />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+      <!-- TinyMCE script for rich text editing -->
+      <script src="https://cdn.tiny.cloud/1/tezye03wmjsy94ybj3g8ccpeytbwk52p08mdwxp73zvujffe/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+      <!-- Additional SEO Meta Tags -->
+      <meta name="robots" content="index, follow">
+      <meta name="theme-color" content="#ffffff">
+
+      {% endblock %}
+    </head>
+
+    <body>
+      <header>
+        <!-- Header content block -->
+        {% block header %} {% endblock %}
+      </header>
+
+      <main>
+        <!-- Main content block -->
+        {% block main %} {% endblock %}
+      </main>
+
+      <footer>
+        <!-- Footer content block -->
+        {% block footer %} {% endblock %}
+      </footer>
+
+      <!-- Include JavaScript file -->
+      <script type="module" src="./assets/js/main.js"></script>    
+    </body>
+  </html> 
