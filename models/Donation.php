@@ -12,17 +12,17 @@ class Donation
   private ?int $id;
 
   /**
-   * @var int|null The unique identifier of the user who made the donation. Null for anonymous donations.
+   * @var int|null The unique identifier of the membership who made the donation. Null for anonymous donations.
    */
-  private ?int $userId;
+  private ?int $membershipId;
 
   /**
-   * @var string|null the first name of the donation. Null for anonymous donations or loggged user.
+   * @var string|null the first name of the donation. Null for anonymous donations.
    */ 
   private ?string $firstName;
 
    /**
-   * @var string|null the last name of the donation. Null for anonymous donations or loggged user.
+   * @var string|null the last name of the donation. Null for anonymous donations.
    */ 
   private ?string $lastName;
 
@@ -49,18 +49,18 @@ class Donation
   /**
    * Donation constructor
    * @param int|null $id The unique identifier of the donation. Null for a new donation.
-   * @param int|null $userId The unique identifier of the user who made the donation. Null for anonymous donations.
+   * @param int|null $membershipId The unique identifier of the membership who made the donation. Null for anonymous donations.
    * @param float $amount The amount of the donation.
    * @param DateTime $donationDate The date when the donation was made.
    * @param string|null $message The message associated with the donation. Null if not provided.
    * @param bool $anonymous Whether the donation is anonymous.
-   * @param string|null $firstName The first name of the donation Null for anonymous donations or loggged user.
-   * @param string|null $firstName The first name of the donation Null for anonymous donations or loggged user.
+   * @param string|null $lastName The last name of the donation Null for anonymous donations.
+   * @param string|null $firstName The first name of the donation Null for anonymous donations.
    */
-  public function __construct(?int $id, ?int $userId, float $amount, DateTime $donationDate, ?string $message, bool $anonymous, ?string $lastName, ?string $firstName)
+  public function __construct(?int $id, ?int $membershipId, float $amount, DateTime $donationDate, ?string $message, bool $anonymous, ?string $lastName, ?string $firstName)
   {
     $this->id = $id;
-    $this->userId = $userId;
+    $this->membershipId = $membershipId;
     $this->amount = $amount;
     $this->donationDate = $donationDate;
     $this->message = $message;
@@ -90,21 +90,22 @@ class Donation
 
     
   /**
-   * Get the unique identifier of the user who made the donation.
+   * Get the unique identifier of the membership who made the donation.
    * 
-   * @return int|null The unique identifier of the user who made the donation. Null for  */
-  public function getUserId(): ?int 
+   * @return int|null The unique identifier of the membership who made the donation. Null for an anonymous donation 
+   */
+  public function getMembershipId(): ?int 
   {
-    return $this->userId;
+    return $this->membershipId;
   }
 
   /**
-   * Set the unique identifier of the user who made the donation.
-   * @param int|null $userId The unique identifier of the user who made the donation. Null for anonymous donations.
+   * Set the unique identifier of the membership who made the donation.
+   * @param int|null $userId The unique identifier of the membership who made the donation. Null for anonymous donations.
    */
-  public function setUserId(?int $userId): void 
+  public function setMembershipId(?int $membershipId): void 
   {
-    $this->userId = $userId;
+    $this->membershipId = $membershipId;
   }
 
     

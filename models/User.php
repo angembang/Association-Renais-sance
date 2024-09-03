@@ -25,11 +25,6 @@ class User
    * @var string the email of the user. 
    */ 
   private string $email;
-
-  /**
-   * @var string the phone number of the user. 
-   */ 
-  private string $phone;
   
   /**
    * @var string the password of the user. 
@@ -41,21 +36,6 @@ class User
    */
    private int $roleId;
   
-   /**
-   * @var string the address of the user. 
-   */
-  private string $address;
-
-  /**
-   * @var DateTime the membership date of the user. 
-   */ 
-  private DateTime $membershipDate;
-
-   /**
-   * @var string the civility of the user. 
-   */
-  private string $civility;
-  
 
   /**
    * User constructor
@@ -63,25 +43,17 @@ class User
    * @param string $firstName The first name of the user.
    * @param string $lastName The last name of the user.
    * @param string $email The email of the user.
-   * @param string $phone The phone number of the user.
    * @param string $password The password of the user.
    * @param int $roleId The role identifier of the user.
-   * @param string $address The address of the user.
-   * @param DateTime $membershipDate The membership date of the user.
-   * @param string $civility The civility of the user.
    */
-  public function __construct(?int $id, string $lastName, string $firstName, string $email, string $phone, string $address, DateTime $membershipDate, string $civility, int $roleId, string $password)
+  public function __construct(?int $id, string $lastName, string $firstName, string $email, int $roleId, string $password)
   {
     $this->id = $id;
     $this->firstName = $firstName;
     $this->lastName = $lastName;
     $this->email = $email;
-    $this->phone = $phone;
     $this->password = $password;
     $this->roleId = $roleId;
-    $this->address = $address;
-    $this->membershipDate = $membershipDate;
-    $this->civility = $civility;
   }
 
   
@@ -165,26 +137,6 @@ class User
     $this->email = $email;
   }
 
-
-   /**
-   * Get the phone number of the user
-   * 
-   * @return string The phone number of the user. 
-   */
-  public function getPhone(): string 
-  {
-    return $this->phone;
-  }
-
-  /**
-   * Set the phone number of the user.
-   * @param string $phone The phone number of the user. 
-   */
-  public function setPhone(string $phone): void 
-  {
-    $this->phone = $phone;
-  }
-  
   
   /**
    * Get the password of the user
@@ -224,66 +176,5 @@ class User
   {
     $this->roleId = $roleId;
   }
-
-
-  /**
-   * Get the address of the user
-   * 
-   * @return string The address of the user. 
-   */
-  public function getAddress(): string 
-  {
-    return $this->address;
-  }
-
-  /**
-   * Set the address of the user.
-   * @param string $address The address of the user. 
-   */
-  public function setAddress(string $address): void 
-  {
-    $this->address = $address;
-  }
-
-
-   /**
-   * Get the membership date of the user
-   * 
-   * @return DateTime The membership date of the user. 
-   */
-  public function getMembershipDate(): DateTime
-  {
-    return $this->membershipDate;
-  }
-
-  /**
-   * Set the membership date of the user.
-   * @param DateTime $membershipDate The membership date of the user. 
-   */
-  public function setMembershipDate(DateTime $membershipDate): void 
-  {
-    $this->membershipDate= $membershipDate;
-  }
-
-
-   /**
-   * Get the civility of the user
-   * 
-   * @return string The civility of the user. 
-   */
-  public function getCivility(): string 
-  {
-    return $this->civility;
-  }
-
-  /**
-   * Set the civility of the user.
-   * @param string $civility The civility of the user. 
-   */
-  public function setCivility(string $civility): void 
-  {
-    $this->civility = $civility;
-  }
-
 
 }

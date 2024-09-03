@@ -18,18 +18,14 @@ class UserManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new user into the database
-      $query = $this->db->prepare("INSERT INTO users ( last_name, first_name, email, phone,  address, membershipDate, civility, roleId, password) 
-      VALUES (:last_name, :first_name, :email, :phone, :address, :membership_date, :civility, :role_id, :password)");
+      $query = $this->db->prepare("INSERT INTO users ( last_name, first_name, email, roleId, password) 
+      VALUES (:last_name, :first_name, :email, :role_id, :password)");
 
       // Bind the parameters with their values.
       $parameters = [
         ":last_name" => $user->getLastName(),
         ":first_name" => $user->getFirstName(),
         ":email" => $user->getEmail(),
-        ":phone" => $user->getPhone(),
-        ":address" => $user->getAddress(),
-        ":membership_date" => $user->getMembershipDate(),
-        ":civility" => $user->getCivility(),
         ":role_id" => $user->getRoleId(),
         ":password" => $user->getPassword()
       ];
@@ -137,45 +133,6 @@ class UserManager extends AbstractManager
 
 
   /**
-   * Retrieves an user by its phone
-   * 
-   * @param string $phone The phone of the user.
-   * 
-   * @return User|null The retrieved user or null if not found. 
-   * 
-   * @throws PDOException If an error occurs during the database operation.
-   */
-  public function findUserByPhone(string $phone): ?User
-  {
-    try {
-      // Prepare the SQL query to retrieve the user by its phone.
-      $query = $this->db->prepare("SELECT * FROM users WHERE phone= :phone");
-
-      // Bind the parameter with its value.
-      $parameter = [
-        ":phone" => $phone
-      ];
-
-      // Execute the query with the parameter
-      $query->execute($parameter);
-
-      // Fetch the user data from the database
-      $userData = $query->fetch(PDO::FETCH_ASSOC);
-
-      // Check if user is found
-      if ($userData) {
-        return $this->hydrateUser($userData); 
-      } 
-      return null;
-    
-    } catch(PDOException $e) {
-      error_log("Failed to find an user:" .$e->getMessage(). $e->getCode());
-      throw new PDOException("Failed to find an user");
-    }  
-  }
-
-
-  /**
    * Retrieves users by their role identiier
    * 
    * @param int $roleId The role identiier of users.
@@ -212,10 +169,6 @@ class UserManager extends AbstractManager
             $userData["first_name"],
             $userData["last_name"],
             $userData["email"],
-            $userData["phone"],
-            $userData["address"],
-            $userData["membership_date"],
-            $userData["civility"],
             $userData["role_id"],
             $userData["password"]
           );
@@ -265,10 +218,6 @@ class UserManager extends AbstractManager
             $userData["first_name"],
             $userData["last_name"],
             $userData["email"],
-            $userData["phone"],
-            $userData["address"],
-            $userData["membership_date"],
-            $userData["civility"],
             $userData["role_id"],
             $userData["password"]
           );
@@ -305,10 +254,6 @@ class UserManager extends AbstractManager
       last_name = :last_name,
       first_name = :first_name,
       email = :email,
-      phone = :phone,
-      address = :address,
-      membership_date = :membership_date,
-      civility = :civility,
       role_id = :role_id,
       password = :password
       WHERE id = :id");
@@ -319,10 +264,6 @@ class UserManager extends AbstractManager
         ":last_name" => $user->getLastName(),
         ":first_name" => $user->getFirstName(),
         ":email" => $user->getEmail(),
-        ":phone" => $user->getPhone(),
-        ":address" => $user->getAddress(),
-        ":membership_date" => $user->getMembershipDate(),
-        ":civility" => $user->getCivility(),
         ":role_id" => $user->getRoleId(),
         ":password" => $user->getPassword()
       ];
@@ -393,10 +334,6 @@ class UserManager extends AbstractManager
         $userData["first_name"],
         $userData["last_name"],
         $userData["email"],
-        $userData["phone"],
-        $userData["address"],
-        $userData["membership_date"],
-        $userData["civility"],
         $userData["role_id"],
         $userData["password"]
       );
