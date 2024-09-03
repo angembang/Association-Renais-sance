@@ -38,19 +38,27 @@ class Router
         case "checkLogin":
           $authController->checkLogin(); 
           break;
+
+        case "membership-register":
+          $authController->membershipRegister(); 
+          break;
+
+        case "check-membership-register":
+          $authController->checkMembershipRegister(); 
+          break;
                     
         case "logout":
           $authController->logout();    
           break;
                     
         default:
-          $pageController->home(); 
+        $authController->membershipRegister();  
           break;
       } 
             
     } else {
       // Route is not provided/ render the home page
-      $pageController->home();
+      $authController->membershipRegister(); 
       die;
       } 
   }
