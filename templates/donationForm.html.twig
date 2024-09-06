@@ -1,0 +1,86 @@
+{% extends "layout.html.twig" %} 
+
+{% block title %}Faire un don à l'association Renais'sance{% endblock %}
+{% block meta_description %}
+    Soutenez l'association Renais'sance en faisant un don pour aider les personnes en difficulté à se réinsérer dans la société.
+{% endblock %}
+{% block meta_keywords %}
+    Faire un don, don, association.
+{% endblock %}
+{% block stylesheets %} 
+    <link rel="stylesheet" href="./assets/css/donation.css">
+{% endblock %}
+
+{% block main %}
+
+    <!-- Display a payment form -->
+    <form id="payment-form" class="main-donation">
+        <h1>Faire un don à l'association renais'sance</h1>
+        <!-- Field to choose if the donation is anonymous -->
+        <fieldset>
+            <legend>Souhaitez-vous que votre don soit anonyme ?</legend>
+            <select id="anonymous" name="anonymous">
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+        </fieldset>
+
+        <!-- Ask if the donor is a member (hidden by default) -->
+        <fieldset id="membership-field" style="display: none;">
+            <legend>Êtes-vous membre de l'Association Renais'sance ?</legend>
+            <select id="is_member" name="is_member">
+                <option value="" disabled selected>Veuillez choisir</option>
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+        </fieldset>
+        
+        <!-- Email input for members (hidden by default) -->
+        <fieldset id="membership-email-field" style="display: none;">
+            <legend><label for="membership_email">Entrez votre email:</label></legend>
+            <input type="email" id="membership_email" name="membership_email" placeholder="Email">
+        </fieldset>
+
+        <!-- First name field (hidden by default) -->
+        <fieldset id="first-name-field" style="display: none;">
+            <legend><label for="firstName">Prénom</label></legend>
+            <input type="text" id="firstName" name="firstName">
+        </fieldset>
+
+        <!-- Last name field (hidden by default) -->
+        <fieldset id="last-name-field" style="display: none;">
+            <legend><label for="lastName">Nom:</label></legend>
+            <input type="text" id="lastName" name="lastName">
+        </fieldset>
+        
+        <!-- Field for a message -->
+        <fieldset id="message-field">
+            <legend><label for="message">Message (optionnel):</label></legend>
+            <textarea id="message" name="message" rows="4" cols="50" placeholder="Laissez un message"></textarea>
+        </fieldset>
+        
+        <!-- Field to choose the donation amount -->
+        <fieldset>
+            <legend><label for="amount">Montant :</label></legend>
+            <!--<input type="number" id="montant-personnalise" name="montant-personnalise" >€ -->
+            <select id="montant-personnalise" name="montant-personnalise">
+                <option value="" disabled selected>Choisissez le montant</option>
+                {% for montant in montants %}
+                <option value="{{ montant }}">{{ montant }} €</option>
+                {% endfor %}
+            </select>
+        </fieldset>
+        
+        <div id="payment-element" >
+            <!--Stripe.js injects the Payment Element-->
+        </div>
+        
+        <button id="submit" disabled="disabled">
+            <div class="spinner hidden" id="spinner"></div>
+            <span id="button-text">Faire un don</span>
+        </button>
+        
+        <div id="payment-message" class="hidden"></div>
+    </form>
+
+{% endblock %}
