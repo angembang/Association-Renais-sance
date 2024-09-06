@@ -19,16 +19,19 @@ class DonationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new donation into the database
-      $query = $this->db->prepare("INSERT INTO donations (user_id, amount, donation_date, message, anonymous, last_name, firts_name) 
-      VALUES (:user_id, :amount, :donation_date, :message, :anonymous, :last_name, :firts_name");
+      $query = $this->db->prepare("INSERT INTO donations ( membership_id, amount, donation_date, message, anonymous, last_name, first_name) 
+      VALUES (:membership_id, :amount, :donation_date, :message, :anonymous, :last_name, :first_name)");
+
+      // Convert DateTime object to a string in the correct format
+      $formattedDate = $donation->getDonationDate()->format('Y-m-d H:i:s');
 
       // Bind the parameters with their values.
       $parameters = [
-        ":user_id" => $donation->getUserId(),
-        ":amount" =>$donation->getAmount(),
-        ":donation_date" => $donation->getDonationDate(),
+        ":membership_id" => $donation->getMembershipId(),
+        ":amount" => $donation->getAmount(),
+        ":donation_date" => $formattedDate, // Formatted date as string
         ":message" => $donation->getMessage(),
-        ":anonymous" => $donation->isAnonymous(),
+        ":anonymous" => $donation->isAnonymous() ? 1 : 0,
         ":last_name" => $donation->getLastName(),
         ":first_name" =>$donation->getFirstName()
       ];
@@ -107,7 +110,7 @@ class DonationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to retrieve all donations into the database
-      $query = $this->db->prepare("SELECT * FROM donations");
+      $query = $this->db->prepare("SELECT * FROM donations ORDER BY donation_date DESC");
 
       // Execute the query
       $query->execute();
@@ -120,12 +123,15 @@ class DonationManager extends AbstractManager
         $donations = [];
         // Loop through each donations data
         foreach($donationsData as $donationData) {
+          // Convertir la chaîne de date en objet DateTime
+          $donationDate = new DateTime($donationData["donation_date"]);
+
           // Instantiate an donation for each donation data
           $donation = new Donation(
             $donationData["id"],
-            $donationData["user_id"],
+            $donationData["membership_id"],
             $donationData["amount"],
-            $donationData["donation_date"],
+            $donationDate,
             $donationData["message"],
             $donationData["anonymous"],
             $donationData["last_name"],
@@ -173,7 +179,7 @@ class DonationManager extends AbstractManager
       // Bind parameters with their values
       $parameters = [
         ":id" => $donation->getId(),
-        ":user_id" => $donation->getUserId(),
+        ":membership_id" => $donation->getMembershipId(),
         ":amount" => $donation->getAmount(),
         ":donation_date" => $donation->getDonationDate(),
         ":message" => $donation->getMessage(),
