@@ -17,9 +17,9 @@ class EventRegistration
   private int $eventId;
 
   /**
-   * @var int|null The unique identifier of the user. Null if the user is not logged in or registered in the platform.
+   * @var int|null The unique identifier of the membership. Null if the user is not a member
    */
-  private ?int $userId;
+  private ?int $membershipId;
 
   /**
    * @var DateTime The date and time when the registration was made.
@@ -40,16 +40,16 @@ class EventRegistration
    * EventRegistration constructor
    * @param int|null $id The unique identifier of the registration. Null for a new registration.
    * @param int $eventId The unique identifier of the event.
-   * @param int|null $userId The unique identifier of the user. Null if the user is not logged in or registered.
+   * @param int|null $membershipId The unique identifier of the membership. Null if the user is not a member.
    * @param DateTime $registrationDate The date and time when the registration was made.
    * @param string|null $firstName The first name of the registrant. Null if not provided.
    * @param string|null $lastName The last name of the registrant. Null if not provided.
    */
-  public function __construct(?int $id, int $eventId, ?int $userId, DateTime $registrationDate, ?string $firstName, ?string $lastName)
+  public function __construct(?int $id, int $eventId, ?int $membershipId, DateTime $registrationDate, ?string $firstName, ?string $lastName)
   {
     $this->id = $id;
     $this->eventId = $eventId;
-    $this->userId = $userId;
+    $this->membershipId = $membershipId;
     $this->registrationDate = $registrationDate;
     $this->firstName = $firstName;
     $this->lastName = $lastName;
@@ -96,22 +96,22 @@ class EventRegistration
 
 
   /**
-   * Get the unique identifier of the user.
+   * Get the unique identifier of the membership.
    * 
-   * @return int|null The unique identifier of the user. Null if the user is not logged in or registered.
+   * @return int|null The unique identifier of themembership. Null if the user is not a member.
    */
-  public function getUserId(): ?int 
+  public function getMembershipId(): ?int 
   {
-    return $this->userId;
+    return $this->membershipId;
   }
 
   /**
-   * Set the unique identifier of the user.
-   * @param int|null $userId The unique identifier of the user. Null if the user is not logged in or registered.
+   * Set the unique identifier of the membership
+   * @param int|null $userId The unique identifier of the membership Null if the user is nota member.
    */
-  public function setUserId(?int $userId): void 
+  public function setMembershipId(?int $membershipId): void 
   {
-    $this->userId = $userId;
+    $this->membershipId = $membershipId;
   }
 
   

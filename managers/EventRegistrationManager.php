@@ -19,13 +19,13 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new event registration into the database
-      $query = $this->db->prepare("INSERT INTO eventRegistrations (event_id, user_id, registration_date, last_name, first_name) 
-      VALUES (:event_id, :user_id, :registration_date, :last_name, :first_name)");
+      $query = $this->db->prepare("INSERT INTO eventRegistrations (event_id, membership_id, registration_date, last_name, first_name) 
+      VALUES (:event_id, :membership_id, :registration_date, :last_name, :first_name)");
 
       // Bind the parameters with their values.
       $parameters = [
         ":event_id" => $eventRegistration->geteventId(),
-        ":user_id" =>$eventRegistration->getUserId(),
+        ":user_id" =>$eventRegistration->getMembershipId(),
         ":registration_date" => $eventRegistration->getRegistrationDate(),
         ":last_name" => $eventRegistration->getLastName(),
         ":first_name" => $eventRegistration->getFirstName()
@@ -129,7 +129,7 @@ class EventRegistrationManager extends AbstractManager
           $eventRegistration = new EventRegistration(
             $eventRegistrationData["id"],
             $eventRegistrationData["event_id"],
-            $eventRegistrationData["user_id"],
+            $eventRegistrationData["membership_id"],
             $eventRegistrationData["registration_date"],
             $eventRegistrationData["last_name"],
             $eventRegistrationData["first_name"]
@@ -178,7 +178,7 @@ class EventRegistrationManager extends AbstractManager
           $eventRegistration = new EventRegistration(
             $eventRegistrationData["id"],
             $eventRegistrationData["event_id"],
-            $eventRegistrationData["user_id"],
+            $eventRegistrationData["membership_id"],
             $eventRegistrationData["registration_date"],
             $eventRegistrationData["last_name"],
             $eventRegistrationData["first_name"]
@@ -214,7 +214,7 @@ class EventRegistrationManager extends AbstractManager
       // Prepare the SQL query to update an eventRegistration.
       $query = $this->db->prepare("UPDATE eventRegistrations SET 
       event_id = :event_id,
-      user_id = :user_id,
+      membership_id = :membership_id,
       registration_date = :registration_date,
       last_name = :last_name,
       first_name = :first_name
@@ -224,7 +224,7 @@ class EventRegistrationManager extends AbstractManager
       $parameters = [
         ":id" => $eventRegistration->getId(),
         ":event_id" => $eventRegistration->getEventId(),
-        ":user_id" => $eventRegistration->getUserId(),
+        ":membership" => $eventRegistration->getMembershipId(),
         ":registration_date" => $eventRegistration->getRegistrationDate(),
         ":last_name" => $eventRegistration->getLastName(),
         ":first_name" => $eventRegistration->getFirstName()
@@ -294,7 +294,7 @@ class EventRegistrationManager extends AbstractManager
       $eventRegistration = new EventRegistration(
         $eventRegistrationData["id"],
         $eventRegistrationData["event_id"],
-        $eventRegistrationData["user_id"],
+        $eventRegistrationData["membership_id"],
         $eventRegistrationData["rgistration_date"],
         $eventRegistrationData["last_name"],
         $eventRegistrationData["first_name"]
