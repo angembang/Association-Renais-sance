@@ -1,0 +1,60 @@
+{% extends "layout.html.twig" %}
+
+{% block title %}Formulaire d'inscription à {{event.title}} {% endblock %}
+
+{% block main %}
+    <h1>Formulaire d'inscription</h1>
+
+    <!-- Modal -->
+    <div id="registerMessageModal" class="registerModal" style="display:none;">
+        <div class="register-modal-content">
+            <span class="registerClose" onclick="closeModal()">&times;</span>
+            <p id="registerModalContent"></p>
+        </div>
+    </div>
+
+    <form action="index.php?route=check-event-registration" method="POST" id="eventRegistrationForm">
+        <fieldset>
+            <!-- Token field -->
+            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+
+            <!-- Event ID (Hidden Field) -->
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+
+            <!-- Ask if the donor is a member (hidden by default) -->
+            <fieldset id="membership-field" style="display: none;">
+                <legend>Êtes-vous membre de l'Association Renais'sance ?</legend>
+                <select id="is_member" name="is_member">
+                    <option value="" disabled selected>Veuillez choisir</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                </select>
+            </fieldset>
+
+            <!-- Email input for members (hidden by default) -->
+            <fieldset id="membership-email-field" style="display: none;">
+                <legend><label for="membership_email">Entrez votre email:</label></legend>
+                <input type="email" id="membership_email" name="membership_email" placeholder="Email">
+            </fieldset>
+
+            <!-- First name field (hidden by default) -->
+            <fieldset id="first-name-field" style="display: none;">
+                <legend><label for="firstName">Prénom</label></legend>
+                <input type="text" id="firstName" name="firstName">
+            </fieldset>
+
+            <!-- Last name field (hidden by default) -->
+            <fieldset id="last-name-field" style="display: none;">
+                <legend><label for="lastName">Nom:</label></legend>
+                <input type="text" id="lastName" name="lastName">
+            </fieldset>
+
+            <!-- Submit Button -->
+            <div class="event-registration-button">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+      
+        </fieldset>
+        
+    </form>
+{% endblock %}

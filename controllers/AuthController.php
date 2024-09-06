@@ -117,11 +117,147 @@ class AuthController extends AbstractController
     }
     
   }
+
+
+  /**
+   * Displays the event member registration form with neccessary data
+   */
+  public function eventRegistration(): void 
+  {
+    // render the the event registration form with neccessary data   
+    $this->render("eventRegistrationForm.html.twig", []);
+  } 
+
+
+  /**
+   * Validates event registration data and creates a new event regitration based on provided information.
+   */
+  public function checkEventRegistration(): void 
+  {
+    try {
+      // Check if the form is not submitted by POST method
+      if($_SERVER["REQUEST_METHOD"] !== "POST") {
+        $this->renderJson(["success" => false, "message" => "Le formulaire n'est pas soumis par la méthode POST"]);
+      }
+      // Check if all required form fields are set and not empty
+      if((!isset($_POST["event_id"]) || empty($_POST["event_id"])) &&
+      (!isset($_POST["is_member"]) || empty($_POST["is_member"]))) {
+        $this->renderJson(["success" => false, "message" => "Veuillez remplir les champs requis"]);
+      }
+      // Initialize CSRFTokenManager and validate the CSRF token from the POST request
+      $tokenManager = new CSRFTokenManager();
+      if (isset($_POST["csrf-token"]) && !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+        $this->renderJson(["success" => false, "message" => "Jeton CSRF invalide"]);
+      }
+      // Instantiate the event registration, event and membership managers 
+      $evenRegistrationManager = new EventRegistrationManager();
+      $eventManager = new EventManager();
+      $membershipManager = new MembershipManager();
+      // Retrieve the event identifier
+      $enventId = htmlspecialchars($_POST["event_id"]);
+
+      $registrationDate = new DateTime();
+
+      // Retrieve the is membership value
+      $isMember = $_POST["is_member"];
+      // Check if is member is true for more validations
+      if($isMember === "true") {
+        // Check if the email is provided
+        if((!isset($_POST["email"]) || empty($_POST["email"]))) {
+          $this->renderJson(["success" => false, "message" => "Veuillez renseigner votre adresse email"]);
+        }
+        // Retrieve and sanitize the email
+        $email = htmlspecialchars($_POST["email"]);
+        // Retrieve the membership by email
+        $membership = $membershipManager->findMembershipByEmail($email);
+        // Check if the membership is null
+        if(!$membership) {
+          $this->renderJson(["success" => false, "message" => "Le membre avec l'email fourni n'existe pas"]);
+        }
+        // Retrieve the unique identifier, the first name and last name of the membership
+        $membershipId = $membership->getId();
+        $membershipFirstName = $membership->getFirstName();
+        $membershipLastName = $membership->getLastName();
+
+        // Create a event model registration 
+        $eventRegistrationModel = new EventRegistration(null, $enventId, $membershipId, $registrationDate, $membershipLastName, $membershipFirstName);
+
+        $eventRegistration = $evenRegistrationManager->createEventRegistration($eventRegistrationModel);
+        // Check if the event registration is not created
+        if(!$eventRegistration) {
+          $this->renderJson(["success" => false, "message" => "Echec lors de l'inscription à l'évenement"]);
+          exit();
+        }
+        // Retrieve the event by its unique identifier
+        $event = $eventManager->findEventById($enventId);
+        if(!$event) {
+          $message = "Inscription reussie mais malheureusement, nous n'avons pas pu récupérer les details de l'événement";
+          $this->render("errorPage.html.twig", [
+            "message" => $message
+          ]);
+        }
+        // Render the success event registration page with event details
+        $this->render("eventRegistrationSuccess.html.twig", [
+          'event' => $event
+        ]);
+
+      } else {
+          // Check if the first name and last name are not set
+          if((!isset($_POST["firstName"]) || empty($_POST["firstName"])) &&
+          (!isset($_POST["lastName"]) || empty($_POST["lastName"]))) {
+            $this->renderJson(["success" => false, "message" => "Veuillez renseigner le nom et prénom"]); 
+          }
+          // Retrieve and sanitize the first name and last name input data
+          $firstName = htmlspecialchars($_POST["firstName"]);
+          $lastName = htmlspecialchars($_POST["lastName"]);
+
+          // Create a event register object
+          $eventRegistrationModel = new EventRegistration(null, $enventId, null, $registrationDate, $lastName, $firstName);
+
+          // Persists the event registration to the database
+          $eventRegistration = $evenRegistrationManager->createEventRegistration($eventRegistrationModel);
+
+          // Check if the event registration is not persisted
+          if(!$eventRegistration) {
+            $this->renderJson(["success" => false, "message" => "Echec lors de l'inscription à l'évenement"]); 
+            exit(); 
+          }
+          // Retrieve the event by its unique identifier
+          $event = $eventManager->findEventById($enventId);
+          if(!$event) {
+            $message = "Inscription reussie mais malheureusement, nous n'avons pas pu récupérer les details de l'événement";
+            $this->render("errorPage.html.twig", [
+              "message" => $message
+            ]);
+          }
+          // Render the success event registration page with event details
+          $this->render("eventRegistrationSuccess.html.twig", [
+            'event' => $event
+          ]);
+      }
+      
+    } catch (Exception $e) {
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Optionally set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
+    }
+
+  }
      
 
 
   /**
-   * Logs out the user.
+   * Logs out the user. 
    */
   public function logout() : void
   {

@@ -52,12 +52,20 @@ class Router
           $authController->checkMembershipRegister(); 
           break;
 
+        case "event-registration":
+          $authController->eventRegistration(); 
+          break;
+
+        case "check-event-registration":
+          $authController->checkEventRegistration(); 
+          break;
+
         case "donation":
           $donationController->showdonationForm(); 
           break;
 
         case "create-paiement-stripe":
-          // Route for displaying a stripe paiement
+          // Route for displaying a stripe paiement 
           $donationController->createStripe();
           break;
 
@@ -76,6 +84,10 @@ class Router
 
         case "error-page":
           $pageController->errorPage();    
+          break;
+
+        case "contact":
+          $pageController->contactPage();    
           break;
                               
         case "logout":
