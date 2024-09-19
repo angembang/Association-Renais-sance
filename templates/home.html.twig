@@ -1,0 +1,66 @@
+{% extends "layout.html.twig" %}
+
+{% block header %}
+    {% include "header.html.twig" %}  
+{% endblock %}
+                
+
+{% block main %}
+    <div class="home-page">
+        <div class="image-asso">
+            <img src="./assets/images/imgasso.jpg" alt="image illustratif de l'association renais'sance">
+        </div>
+        <section class="latest-news event-section">
+            {% if event %} 
+                <h2>ÉVÉNÉMENT </h2>
+                <div class="icone"> 
+                    <span> 
+                        <i class="fas fa-circle" aria-hidden="true"></i> 
+                    </span>
+                </div>
+                <div class="article-info">
+                    <div class="art-img">
+                        <img src="{{ event.image }}" alt="{{ event.title }}">
+                    </div>
+                    <div class="art-content">
+                        <h3>{{ event.title }}</h3>
+                        <p>{{ event.description }}</p>
+                        <p class="event-submit-p"><a href="index.php?route=event-registration&event_id={{ event.id }}" class="event-submit">S'inscrire</a></p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Aucun événement programmé pour le moment.</p>
+            {% endif %}
+        </section>
+        <div class="hi">
+        <section class="latest-news actuality-section">
+            {% if news %} 
+                <h2>ACTUALITÉ</h2>
+                <div class="icone"> 
+                    <span> 
+                        <i class="fas fa-circle" aria-hidden="true"></i> 
+                    </span>
+                </div>
+                <h3 class="actuality-home">{{ news.title }}</h3>
+                <div class="article-info">
+                    <div class="art-img">
+                        <img src="{{ news.image }}" alt="{{ news.title }}">
+                    </div>
+                    <div class="art-content">
+                        <p class="home-excerpt">{{ news.excerpt }}</p>
+                        <p class="event-submit-p"><a href="index.php?route=show-news&news_id={{ news.id }}" class="event-submit">Lire la suite</a></p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Aucune actualité disponible pour le moment.</p>
+            {% endif %}
+        </section>
+    </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include "footer.html.twig" %}  
+{% endblock %}
+
+{% block scripts %}<script src="./assets/js/burger.js"></script>{% endblock %}  

@@ -1,0 +1,35 @@
+{% block footer %}
+
+  <div id="map">	
+    <div id="carte">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d151979.63459745867!2d-1.8550732129106597!3d48.08148197998926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x480ee065dbd6a0b7%3A0xb9cbd067717d5ee7!2s7%20Sq.%20Louis%20et%20Maurice%20de%20Broglie%2C%2035000%20Rennes!5e0!3m2!1sfr!2sfr!4v1726094850227!5m2!1sfr!2sfr"></iframe>
+    </div>
+    <!--contact form -->
+        <div class="form-map">
+            <form id="contact-form">
+                <div class="head">
+                       <h3 class="headform">Contact Infos</h3>
+                    <address>
+                        <p><span id="bold">Association Renais'sance</span><br>7 Square Louis et Maurice de Broglie 35000 Rennes <br>
+                        <span id="tel">Tel</span> : 0749279774</p>
+                    </address>
+                   </div>
+                <input type="text" id="name" name="name" placeholder="Name">
+                <input type="text" id="email" name="email" placeholder="Email">
+                <input type="text" id="subject" name="subject" placeholder="Subject">
+                <textarea id="message" name="message" placeholder="Message"></textarea>
+                <input type="submit" value="Send Message" class="btnform">
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        <!-- Social media links -->
+        <div class="i-foot">
+            <a href="index.php?route=membership-register">Adhérer</a>
+            <a href="index.php?route=donation">Faire un don</a>
+            <a href="index.php?route=show-news">Actualités</a>
+        </div>
+    </div>
+    
+{% endblock %}

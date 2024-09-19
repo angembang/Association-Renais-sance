@@ -24,8 +24,8 @@ class Router
     if(isset($get["route"])) {
       // Switch statement for routing
       switch($get["route"]) {
-        case "home":
-          $pageController->home();    
+        case "admin-home":
+          $pageController->adminHome();    
           break;
 
         case "inscription":
@@ -52,12 +52,48 @@ class Router
           $authController->checkMembershipRegister(); 
           break;
 
+        case "show-membership":
+          $pageController->showMemberships(); 
+          break;
+
+        case "event-register":
+          $authController->eventRegister(); 
+          break;
+
+        case "check-event-register":
+          $authController->checkEvent(); 
+          break;
+
+        case "show-event":
+          $pageController->showEvents(); 
+          break;
+
         case "event-registration":
           $authController->eventRegistration(); 
           break;
 
         case "check-event-registration":
           $authController->checkEventRegistration(); 
+          break;
+
+        case "show-event-registration":
+          $pageController->showEventRegistrations(); 
+          break;
+
+        case "news-register":
+          $authController->newsRegister(); 
+          break;
+
+        case "check-news":
+          $authController->checkNews(); 
+          break;
+
+        case "news-success":
+          $pageController->newsSuccess(); 
+          break;
+
+        case "show-news":
+          $pageController->showNews(); 
           break;
 
         case "donation":
