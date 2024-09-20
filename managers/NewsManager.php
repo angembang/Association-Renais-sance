@@ -20,6 +20,9 @@ class NewsManager extends AbstractManager
       // Prepare the SQL query to insert a new news into the database
       $query = $this->db->prepare("INSERT INTO news (title, content, image, video, publication_date, update_date, excerpt) 
       VALUES (:title, :content, :image, :video, :publication_date, :update_date, :excerpt)");
+      // Format the DateTime objects to strings
+      $publicationDate = $news->getPublicationDate()->format('Y-m-d H:i:s');
+      $updateDate = null;
 
       // Bind the parameters with their values.
       $parameters = [
@@ -27,8 +30,8 @@ class NewsManager extends AbstractManager
         ":content" =>$news->getContent(),
         ":image" => $news->getImage(),
         "video" => $news->getVideo(),
-        ":publication_date" => $news->getPublicationDate(),
-        ":update_date" => $news->getUpdateDate(),
+        ":publication_date" => $publicationDate,
+        ":update_date" => $updateDate,
         ":excerpt" => $news->getExcerpt()
       ];
 
@@ -153,6 +156,38 @@ class NewsManager extends AbstractManager
   }
 
 
+   /**
+   * Retrieves the latest news insert
+   * 
+   * @return array|null The retrieved news or null if no news is found. 
+   * 
+   * @throws PDOException If an error occurs during the database operation.
+   */
+  public function findLatest(): ?News
+  {
+    try {
+      // Prepare the SQL query to retrieve the latest news (by publication date)
+      $query = $this->db->prepare("SELECT * FROM news ORDER BY publication_date DESC LIMIT 1");
+
+      // Execute the query with the parameter
+      $query->execute();
+
+      // Fetch the news data from the database
+      $newsData = $query->fetch(PDO::FETCH_ASSOC);
+
+      // Check if news is found
+      if ($newsData) {
+        return $this->hydrateNews($newsData); 
+      } 
+      return null;
+
+    } catch (PDOException $e) {
+        error_log("Failed to find latest news: " . $e->getMessage());
+        throw new PDOException("Failed to find latest news");
+    }
+}
+
+
   /**
    * Retrieves all news
    *
@@ -164,7 +199,7 @@ class NewsManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to retrieve all news into the database
-      $query = $this->db->prepare("SELECT * FROM news");
+      $query = $this->db->prepare("SELECT * FROM news ORDER BY publication_date DESC");
 
       // Execute the query
       $query->execute();
@@ -175,8 +210,12 @@ class NewsManager extends AbstractManager
       // Check if news data is not empty
       if($actualitiesData) {
         $actualities = [];
+
         // Loop through each newsdata
         foreach($actualitiesData as $newsData) {
+          // Convert publication_date and update_date to DateTime objects
+          $publicationDate = new DateTime($newsData["publication_date"]);
+          $updateDate = isset($newsData["update_date"]) ? new DateTime($newsData["update_date"]) : null;
           // Instantiate an news for each news data
           $news = new News(
             $newsData["id"],
@@ -184,8 +223,8 @@ class NewsManager extends AbstractManager
             $newsData["content"],
             $newsData["image"],
             $newsData["video"],
-            $newsData["publication_date"],
-            $newsData["update_date"],
+            $publicationDate,
+            $updateDate,
             $newsData["excerpt"]
           );
           // Add the instantiated news object to the news array
@@ -299,6 +338,9 @@ class NewsManager extends AbstractManager
      */
     private function hydrateNews($newsData): News
     {
+      // Convert publication_date and update_date to DateTime objects
+      $publicationDate = new DateTime($newsData["publication_date"]);
+      $updateDate = isset($newsData["update_date"]) ? new DateTime($newsData["update_date"]) : null;
       // Instantiate a new news with retrieved data
       $news = new News(
         $newsData["id"],
@@ -306,8 +348,8 @@ class NewsManager extends AbstractManager
         $newsData["content"],
         $newsData["image"],
         $newsData["video"],
-        $newsData["publication_date"],
-        $newsData["update_date"],
+        $publicationDate,
+        $updateDate,
         $newsData["excerpt"]
         
       );

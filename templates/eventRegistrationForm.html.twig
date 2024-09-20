@@ -2,7 +2,13 @@
 
 {% block title %}Formulaire d'inscription à {{event.title}} {% endblock %}
 
+{% block stylesheets %} 
+    <link rel="stylesheet" href="./assets/css/eventRegistration.css">
+{% endblock %}
+
+
 {% block main %}
+<section class="eventRegistration-form">
     <h1>Formulaire d'inscription</h1>
 
     <!-- Modal -->
@@ -14,15 +20,15 @@
     </div>
 
     <form action="index.php?route=check-event-registration" method="POST" id="eventRegistrationForm">
-        <fieldset>
+        <fieldset class="event-registration-fieldset">
             <!-- Token field -->
             <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
 
             <!-- Event ID (Hidden Field) -->
-            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <input type="hidden" id="event_id" name="event_id" value="{{ event.id }}">
 
-            <!-- Ask if the donor is a member (hidden by default) -->
-            <fieldset id="membership-field" style="display: none;">
+            <!-- Ask if the donor is a member ) -->
+            <fieldset id="membership-field">
                 <legend>Êtes-vous membre de l'Association Renais'sance ?</legend>
                 <select id="is_member" name="is_member">
                     <option value="" disabled selected>Veuillez choisir</option>
@@ -51,10 +57,14 @@
 
             <!-- Submit Button -->
             <div class="event-registration-button">
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit">S'inscrire</button>
             </div>
       
         </fieldset>
         
     </form>
+</section>
 {% endblock %}
+{% block scripts %}<script src="./assets/js/eventRegistration.js"></script>{% endblock %}
+
+

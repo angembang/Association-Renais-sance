@@ -20,14 +20,18 @@ class EventManager extends AbstractManager
     try {
       // Prepare the SQL query to insert a new event into the database
       $query = $this->db->prepare("INSERT INTO events (title, description, start_date, end_date, location, organizer, seats_available, image, video) 
-      VALUES (:title, :description, :start_date, :end_date, :location, :organizer, :seats_available, :image, :video");
+      VALUES (:title, :description, :start_date, :end_date, :location, :organizer, :seats_available, :image, :video)");
+
+      // Format the DateTime objects to strings
+      $startDateFormatted = $event->getStartDate()->format('Y-m-d H:i:s');
+      $endDateFormatted = $event->getEndDate()->format('Y-m-d H:i:s');
 
       // Bind the parameters with their values.
       $parameters = [
         ":title" => $event->getTitle(),
         ":description" =>$event->getDescription(),
-        ":start_date" => $event->getStartDate(),
-        ":end_date" => $event->getEndDate(),
+        ":start_date" => $startDateFormatted,
+        ":end_date" => $endDateFormatted,
         ":location" => $event->getLocation(),
         ":organizer" => $event->getOrganiser(),
         ":seats_available" =>$event->getSeatsAvailable(),
@@ -120,6 +124,39 @@ class EventManager extends AbstractManager
 
       // Execute the query with the parameter
       $query->execute($parameter);
+
+      // Fetch the event data from the database
+      $eventData = $query->fetch(PDO::FETCH_ASSOC);
+
+      // Check if event is found
+      if ($eventData) {
+        return $this->hydrateEvent($eventData); 
+      } 
+      return null;
+
+    } catch (PDOException $e) {
+      // Log the error message and code to the error log file
+      error_log("Failed to find an event:" .$e->getMessage(). $e->getCode());
+      // Handle the exception appropriately
+      throw new PDOException("Failed to find an event");
+    }     
+  }
+
+
+  /**
+   * Retrieves the latest event insert
+   * 
+   * @return array|null The retrieved event or null if no news is found. 
+   * 
+   * @throws PDOException If an error occurs during the database operation.
+   */
+  public function findLatest(): ?Event
+  {
+    try {
+      // Prepare the SQL query to retrieve the latest news (by publication date)
+      $query = $this->db->prepare("SELECT * FROM events ORDER BY start_date DESC LIMIT 1");
+      // Execute the query with the parameter
+      $query->execute();
 
       // Fetch the event data from the database
       $eventData = $query->fetch(PDO::FETCH_ASSOC);
@@ -291,13 +328,15 @@ class EventManager extends AbstractManager
      */
     private function hydrateEvent($eventData): Event
     {
+      $startDate = new DateTime($eventData["start_date"]);
+      $endDate = new DateTime($eventData["end_date"]);
       // Instantiate a new event with retrieved data
       $event = new Event(
         $eventData["id"],
         $eventData["title"],
         $eventData["description"],
-        $eventData["start_date"],
-        $eventData["end_date"],
+        $startDate,
+        $endDate,
         $eventData["location"],
         $eventData["organizer"],
         $eventData["seats_available"],

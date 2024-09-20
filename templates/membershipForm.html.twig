@@ -1,101 +1,99 @@
 {% extends "layout.html.twig" %}
 
 {% block title %}Fiche d'adhésion à l'association Renais'sance{% endblock %}
+{% block meta_description %}
+   Adhérer à l'association Renais'sance pour reussir sa réinsertion dans la société.
+{% endblock %}
+{% block meta_keywords %}
+    Adhérer, association.
+{% endblock %}
+{% block stylesheets %} 
+    <link rel="stylesheet" href="./assets/css/donation.css">
+{% endblock %}
 
 {% block main %}
-
-<div class="main">
-    
     <section class="membership-form">
-        <h2>Fiche d'adhésion</h2>
-        <p>Pour adhérer, veuillez remplir ce formulaire</p>
+        <h2 class="membership-form-h">Pour adhérer, veuillez remplir ce formulaire</h2>
+        <p class="membership-form-p">Pour adhérer, veuillez remplir ce formulaire</p>
     
         <!-- Modal -->
-            <div id="registerMessageModal" class="registerModal">
-                <div class="register-modal-content">
-                    <span class="registerClose" onclick="closeModal()">&times;</span>
-                    <p id="registerModalContent"></p>
-                </div>
+        <div id="registerMessageModal" class="registerModal" style="display:none;">
+            <div class="register-modal-content">
+                <span class="registerClose" onclick="closeModal()">&times;</span>
+                <p id="registerModalContent"></p>
             </div>
+        </div>
     
         <!-- Registration Form -->
         <form action="index.php?route=check-membership-register" method="POST" id="registerForm">
-            <fieldset>
-            
-                <!-- Token field -->
-                <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+            <!-- Token field -->
+            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
 
-                <!-- civility selection field -->
-                <fieldset id="civility">
-                    <label for="civility">Civility:</label>
-                    <select id="civility" name="civility" required>
-                       <option value="" disabled selected>Choisissez la civilité</option>
-                        <option value="Madame">Madame</option>
-                        <option value="Monsieur">Monsieur</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </fieldset>
-            
-                <!-- Role selection field -->
-                <fieldset id="role">
-                    <label for="idRole">Role :</label>
-                    <select id="idRole" name="idRole">
-                        <option value="" disabled selected>Choisissez un rôle</option>
-                        <!-- Loop to display role selection options -->
-                        {% for role in roles %}
-                            <option value="{{ role.id }}">
-                                {{ role.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </fieldset>
-                
-                <!-- First name field -->
-                <fieldset class="firstNameField">
-                    <label for="firstName">Prénom :</label>
-                    <input type="text" id="firstName" name="firstName" placeholder="Prenom" required>
-                </fieldset>
-            
-                <!-- Last name field -->
-                <fieldset class="lastNameField">
-                    <label for="lastName">Nom :</label>
-                    <input type="text" id="lastName" name="lastName" placeholder="Nom" required>
-                </fieldset>
-            
-                <!-- Email field -->
-                <fieldset class="emailField">
-                    <label for="email">Email :</label>
-                    <input type="email" id="email" name="email" placeholder="Email" required>
-                </fieldset>
-            
-                <!-- Phone field -->
-                <fieldset class="phoneField">
-                    <label for="phone">Numéro de téléphone:</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Numéro de téléphone" required>
-                </fieldset>
-            
-                <!-- Address field -->
-                <fieldset class="addressField">
-                    <label for="address">Adresse :</label>
-                    <input type="text" id="address" name="address" placeholder="Adresse" required>
-                </fieldset>
-
-                <!-- Postal code field -->
-                <fieldset class="postalCodeField">
-                    <label for="postalCode">Code postal:</label>
-                    <input type="text" id="postalCode" name="postalCode" placeholder="code postal" required>
-                </fieldset>
-            
-                <!-- Registration button -->
-                <button type="submit" id="submitButton">S'inscrire</button>
-            
+            <!-- civility selection field -->
+            <fieldset id="civility">
+                <legend><label for="civility">Civilité:</label></legend>
+                <select id="civility" name="civility" required>
+                    <option value="" disabled selected>Choisissez la civilité</option>
+                    <option value="Madame">Madame</option>
+                    <option value="Monsieur">Monsieur</option>
+                    <option value="Autre">Autre</option>
+                </select>
             </fieldset>
+            
+            <!-- Role selection field -->
+            <fieldset id="role">
+                <legend><label for="idRole">Rôle :</label></legend>
+                <select id="idRole" name="idRole" required>
+                <option value="" disabled selected>Choisissez un rôle</option>
+                <!-- Loop to display role selection options -->
+                {% for role in roles %}
+                    <option value="{{ role.id }}">
+                        {{ role.name }}
+                    </option>
+                {% endfor %}
+                </select>
+            </fieldset>
+                
+            <!-- First name field -->
+            <fieldset class="firstNameField">
+                <legend><label for="firstName">Prénom :</label></legend>
+                <input type="text" id="firstName" name="firstName" placeholder="Prenom" required>
+            </fieldset>
+            
+            <!-- Last name field -->
+            <fieldset class="lastNameField">
+                <legend><label for="lastName">Nom :</label></legend>
+                <input type="text" id="lastName" name="lastName" placeholder="Nom" required>
+            </fieldset>
+            
+            <!-- Email field -->
+            <fieldset class="emailField">
+                <legend><label for="email">Email :</label></legend>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+            </fieldset>
+            
+            <!-- Phone field -->
+            <fieldset class="phoneField">
+                <legend><label for="phone">Numéro de téléphone:</label></legend>
+                <input type="tel" id="phone" name="phone" placeholder="Numéro de téléphone" required>
+            </fieldset>
+            
+            <!-- Address field -->
+            <fieldset class="addressField">
+                <legend><label for="address">Adresse :</label></legend>
+                <input type="text" id="address" name="address" placeholder="Adresse" required>
+            </fieldset>
+
+            <!-- Postal code field -->
+            <fieldset class="postalCodeField">
+                <legend><label for="postalCode">Code postal:</label></legend>
+                <input type="text" id="postalCode" name="postalCode" placeholder="code postal" required>
+            </fieldset>
+            
+            <!-- Registration button -->
+            <button type="submit" id="submitButton">Adhérer</button>
         
         </form>
     </section>
-</div>
 
-{% endblock %}
-{% block footer %}
-    {% include "footer.html.twig" %}
 {% endblock %}

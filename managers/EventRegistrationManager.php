@@ -19,14 +19,16 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new event registration into the database
-      $query = $this->db->prepare("INSERT INTO eventRegistrations (event_id, membership_id, registration_date, last_name, first_name) 
+      $query = $this->db->prepare("INSERT INTO event_registrations (event_id, membership_id, registration_date, last_name, first_name) 
       VALUES (:event_id, :membership_id, :registration_date, :last_name, :first_name)");
+      // Format the DateTime objects to strings
+      $publicationDate = $eventRegistration->getRegistrationDate()->format('Y-m-d H:i:s');
 
       // Bind the parameters with their values.
       $parameters = [
         ":event_id" => $eventRegistration->geteventId(),
-        ":user_id" =>$eventRegistration->getMembershipId(),
-        ":registration_date" => $eventRegistration->getRegistrationDate(),
+        ":membership_id" =>$eventRegistration->getMembershipId(),
+        ":registration_date" => $publicationDate,
         ":last_name" => $eventRegistration->getLastName(),
         ":first_name" => $eventRegistration->getFirstName()
       ];
@@ -66,7 +68,7 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to retrieve the eventRegistration by its unique identifier
-      $query = $this->db->prepare("SELECT * FROM eventRegistrations WHERE id = :id");
+      $query = $this->db->prepare("SELECT * FROM event_registrations WHERE id = :id");
     
       // Bind the parameter with its value.
       $parameter = [
@@ -95,6 +97,48 @@ class EventRegistrationManager extends AbstractManager
 
 
   /**
+   * Retrieves an eventRegistration by its membership identifier
+   * 
+   * @param int $eventRegistrationMembershipId The membership identifier of the eventRegistration
+   * 
+   * @return EventRegistration|null The retrieved eventRegistration. Null if not found
+   * 
+   * @throws PDOException If an error occurs during the database operation.
+   */
+  public function findEventRegistrationByMembershipId(int $eventRegistrationMembershipId): ?EventRegistration
+  {
+    try {
+      // Prepare the SQL query to retrieve the eventRegistration by its membership identifier
+      $query = $this->db->prepare("SELECT * FROM event_registrations WHERE membership_id = :membership_id");
+    
+      // Bind the parameter with its value.
+      $parameter = [
+        ":membership_id" => $eventRegistrationMembershipId
+      ];
+
+      // Execute the query with the parameter
+      $query->execute($parameter);
+
+      // Fetch the event register data from the database
+      $eventRegistrationData = $query->fetch(PDO::FETCH_ASSOC);
+
+      // Check if eventRegistration is found
+      if ($eventRegistrationData) {
+        return $this->hydrateEventRegistration($eventRegistrationData); 
+      } 
+      return null;
+
+    } catch (PDOException $e) {
+      // Log the error message and code to the error log file
+      error_log("Failed to find an eventRegistration:" .$e->getMessage(). $e->getCode());
+      // Handle the exception appropriately
+      throw new PDOException("Failed to find an eventRegistration");
+    }     
+  }
+
+
+
+  /**
    * Retrieves eventRegistrations by its event identifier
    * 
    * @param int $event_id The event identifier of the eventRegistration.
@@ -107,7 +151,7 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to retrieve eventRegistration by their event identifier.
-      $query = $this->db->prepare("SELECT * FROM eventRegistrations WHERE event_id= :event_id");
+      $query = $this->db->prepare("SELECT * FROM event_registrations WHERE event_id= :event_id");
 
       // Bind the parameter with its value.
       $parameter = [
@@ -125,12 +169,14 @@ class EventRegistrationManager extends AbstractManager
         $eventRegistrations = [];
         // Loop through each eventRegistrationsdata
         foreach($eventRegistrationsData as $eventRegistrationData) {
+          // Convert publication_date and update_date to DateTime objects
+          $registrationDate = new DateTime($eventRegistrationData["registration_date"]);
           // Instantiate an eventRegistration for each eventRegistration data
           $eventRegistration = new EventRegistration(
             $eventRegistrationData["id"],
             $eventRegistrationData["event_id"],
             $eventRegistrationData["membership_id"],
-            $eventRegistrationData["registration_date"],
+            $registrationDate,
             $eventRegistrationData["last_name"],
             $eventRegistrationData["first_name"]
           );
@@ -161,7 +207,7 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to retrieve all eventRegistration into the database
-      $query = $this->db->prepare("SELECT * FROM eventRegistrations");
+      $query = $this->db->prepare("SELECT * FROM event_registrations");
 
       // Execute the query
       $query->execute();
@@ -212,7 +258,7 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to update an eventRegistration.
-      $query = $this->db->prepare("UPDATE eventRegistrations SET 
+      $query = $this->db->prepare("UPDATE event_registrations SET 
       event_id = :event_id,
       membership_id = :membership_id,
       registration_date = :registration_date,
@@ -259,7 +305,7 @@ class EventRegistrationManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to delete the retrieve eventRegistration.
-      $query = $this->db->prepare("DELETE FROM eventRegistrations WHERE id = :id");
+      $query = $this->db->prepare("DELETE FROM event_registrations WHERE id = :id");
 
       // Bind the parameter its value
       $parameters = [
@@ -290,12 +336,14 @@ class EventRegistrationManager extends AbstractManager
      */
     private function hydrateEventRegistration($eventRegistrationData): EventRegistration
     {
+      // Convert publication_date and update_date to DateTime objects
+      $registrationDate = new DateTime($eventRegistrationData["registration_date"]);
       // Instantiate a new eventRegistration with retrieved data
       $eventRegistration = new EventRegistration(
         $eventRegistrationData["id"],
         $eventRegistrationData["event_id"],
         $eventRegistrationData["membership_id"],
-        $eventRegistrationData["rgistration_date"],
+        $registrationDate,
         $eventRegistrationData["last_name"],
         $eventRegistrationData["first_name"]
       );
