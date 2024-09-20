@@ -1,0 +1,84 @@
+{% extends "layout.html.twig" %}
+
+{% block stylesheets %} 
+    <link rel="stylesheet" href="./assets/css/donation.css">
+{% endblock %}
+
+{% block main %}
+    <section class="event-form">
+        <h2 class="membership-form-h">Formulaire d'enregistrement d'un événement</h2>
+    
+        <!-- Modal -->
+        <div id="registerMessageModal" class="registerModal" style="display:none;">
+            <div class="register-modal-content">
+                <span class="registerClose" onclick="closeModal()">&times;</span>
+                <p id="registerModalContent"></p>
+            </div>
+        </div>
+    
+        <!-- Event Form -->
+        <form action="index.php?route=check-event-register" method="POST" id="eventForm" enctype="multipart/form-data">
+            <!-- Token field -->
+            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+
+            <!-- Title field -->
+            <fieldset class="event-form-title">
+                <legend><label for="title">Titre:</label></legend>
+                <input type="text" id="title" name="title" placeholder="titre" required>
+            </fieldset>
+
+            <!-- Description field -->
+            <fieldset class="event-form-description">
+                <legend><label for="description">Description:</label></legend>
+                <textarea id="description" name="description" placeholder="description" required></textarea>
+            </fieldset>
+
+            <!-- Start date field -->
+            <fieldset class="event-form-startD">
+                <legend><label for="startDate">Date et heure de début :</label></legend>
+                <input type="datetime-local" id="startDate" name="startDate" required>
+            </fieldset>
+
+            <!-- End date field -->
+            <fieldset class="event-form-endD">
+                <legend><label for="endDate">Date et heure de fin :</label></legend>
+                <input type="datetime-local" id="endDate" name="endDate" required>
+            </fieldset>
+
+            <!-- Location field -->
+            <fieldset class="event-form-location">
+                <legend><label for="location">Lieu :</label></legend>
+                <input type="text" id="location" name="location" required>
+            </fieldset>
+
+            <!-- Organizer field -->
+            <fieldset class="event-form-location">
+                <legend><label for="organizer">Organisateur :</label></legend>
+                <input type="text" id="organizer" name="organizer" required>
+            </fieldset>
+
+            <!-- seats available field -->
+            <fieldset class="event-form-seats">
+                <legend><label for="seatsAvailable">Nombre de places disponibles :</label></legend>
+                <input type="number" id="seatsAvailable" name="seatsAvailable" required>
+            </fieldset>
+
+            <!-- image field -->
+            <fieldset class="event-form-image">
+                <legend><label for="image">Image :</label></legend>
+                <input type="file" id="image" name="image" accept="image/*">
+            </fieldset>
+
+            <!-- video field -->
+            <fieldset class="event-form-video">
+                <legend><label for="video">Vidéo (lien YouTube) :</label></legend>
+                <input type="url" id="video" name="video" placeholder="Insérez le lien YouTube de la vidéo">
+            </fieldset>
+
+            <!-- Registration button -->
+            <button type="submit">Créer l'événement</button>
+        
+        </form>
+    </section>
+
+{% endblock %}
