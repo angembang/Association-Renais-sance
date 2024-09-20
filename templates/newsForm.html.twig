@@ -1,0 +1,64 @@
+{% extends "layout.html.twig" %}
+
+{% block main %}
+    <section class="news-form">
+        <h2 class="membership-form-h">Formulaire d'ajout d'actualité</h2>
+    
+        <!-- Modal -->
+        <div id="registerMessageModal" class="registerModal" style="display:none;">
+            <div class="register-modal-content">
+                <span class="registerClose" onclick="closeModal()">&times;</span>
+                <p id="registerModalContent"></p>
+            </div>
+        </div>
+    
+        <!-- news Form -->
+        <form action="index.php?route=check-news" method="POST" id="newsForm" enctype="multipart/form-data">
+            <!-- Token field -->
+            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+
+            <!-- Title field -->
+            <fieldset class="news-title">
+                <legend><label for="title">Titre:</label></legend>
+                <input type="text" id="title" name="title" placeholder="titre" required>
+            </fieldset>
+
+            <!--Excerpt field -->
+            <fieldset class="news-excerpt">
+                <legend><label for="excerpt">Accroche :</label></legend>
+                <textarea id="excerpt" name="excerpt" placeholder="accroche" required></textarea>
+            </fieldset>
+
+            <!-- Description field -->
+            <fieldset class="news-content">
+                <legend><label for="content">Contenu:</label></legend>
+                <textarea id="contenu" name="content" placeholder="content"></textarea>
+            </fieldset>
+
+            <!-- image field -->
+            <fieldset class="news-image">
+                <legend><label for="image">Image :</label></legend>
+                <input type="file" id="image" name="image" accept="image/*">
+            </fieldset>
+
+            <!-- video field -->
+            <fieldset class="news-video">
+                <legend><label for="video">Vidéo (lien YouTube) :</label></legend>
+                <input type="url" id="video" name="video" placeholder="Insérez le lien YouTube de la vidéo">
+            </fieldset>
+
+            <!-- publication date field -->
+            <fieldset class="news-publicationDate">
+                <legend><label for="publicationDate">Date de publication :</label></legend>
+                <input type="datetime-local" id="publicationDate" name="publicationDate" required>
+            </fieldset>
+
+
+            <!-- Registration button -->
+            <button type="submit">Publier l'actualité</button>
+        
+        </form>
+    </section>
+
+{% endblock %}
+{% block scripts %}<script src="./assets/js/tinyMCE-config.js"></script>{% endblock %}
