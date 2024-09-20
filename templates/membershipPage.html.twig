@@ -1,0 +1,37 @@
+{% extends "layout.html.twig" %}
+
+{% block main %}
+    <div class="membership-page">
+        <section class="membership-section">
+            <h2>Listes des membres</h2>
+            {% if memberships is not empty %}
+        <table>
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for membership in memberships %}
+                    <tr>
+                        <td>{{ membership.id }}</td>
+                        <td>{{ membership.firstName }}</td>
+                        <td>{{ membership.lastName }}</td>
+                        <td>{{ membership.email }}</td>
+                        <td>{{ roles[membership.roleId] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No members found.</p>
+    {% endif %}
+
+        </section>
+    </div>
+    
+{% endblock %}
