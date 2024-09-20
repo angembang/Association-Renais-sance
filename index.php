@@ -10,7 +10,6 @@ require "vendor/autoload.php";
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-
 // Check if the CSRF token is not set in the session
 if(!isset($_SESSION["csrf-token"]))
 {
@@ -32,6 +31,8 @@ $router = new Router();
  * Handle the request based on the $_GET parameters.
  */
 $router->handleRequest($_GET);
+
+
 
 
 
