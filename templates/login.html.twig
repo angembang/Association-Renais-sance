@@ -1,0 +1,49 @@
+{% extends "layout.html.twig" %}
+
+{% block header %}
+    {% include "header.html.twig" %}
+{% endblock %}
+
+{% block main %}
+<div class="main">
+    
+    <section class="login-form">
+        <!-- Title for the login page -->
+        <h2>Connexion</h2>
+    
+        <!-- Alert message section -->
+        <section class="alert-message">
+            <!-- Error message placeholder -->
+            <h3 id="error-message"></h3>
+            <!-- Button to close the error message -->
+            <button type="button" class="close-btn-error">Fermer</button>
+        </section>
+    
+        <!-- Login form -->
+        <form action="index.php?route=checkLogin" method="POST" id="login-form">
+        
+            <!-- CSRF token field -->
+            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}">
+            
+            <fieldset>
+                <!-- Email input field -->
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Email" autocomplete="email" required>
+            </fieldset>
+            <fieldset>
+                <!-- Password input field -->
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+            </fieldset>
+            <!-- Submit button -->
+            <button type="submit">Se connecter </button>
+        
+        </form>
+    </section>
+</div>
+    
+{% endblock %}
+
+{% block footer %}
+    {% include "footer.html.twig" %}
+{% endblock %}

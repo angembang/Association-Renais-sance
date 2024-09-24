@@ -18,7 +18,7 @@ class UserManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new user into the database
-      $query = $this->db->prepare("INSERT INTO users ( last_name, first_name, email, roleId, password) 
+      $query = $this->db->prepare("INSERT INTO users ( last_name, first_name, email, role_id, password) 
       VALUES (:last_name, :first_name, :email, :role_id, :password)");
 
       // Bind the parameters with their values.

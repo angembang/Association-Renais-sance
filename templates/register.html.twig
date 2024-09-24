@@ -1,0 +1,83 @@
+{% extends "layout.html.twig" %}
+
+{% block header %}
+    {% include "header.html.twig" %}
+{% endblock %}
+
+{% block main %}
+<div class="main">
+    <section class="register-form">
+        <h2>Inscription</h2>
+    
+        <!-- Modal -->
+        <div id="registerMessageModal" class="registerModal">
+            <div class="register-modal-content">
+                <span class="registerClose" onclick="closeModal()">&times;</span>
+                <p id="registerModalContent"></p>
+            </div>
+        </div>
+    
+        <!-- Registration Form -->
+        <form action="index.php?route=checkRegister" method="POST" id="registerForm">
+            <fieldset>
+            
+                <!-- Token field -->
+                <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}">
+            
+                <!-- Role selection field -->
+                <fieldset id="role">
+                    <label for="idRole">Role :</label>
+                    <select id="idRole" name="idRole">
+                        <option value="" disabled selected>Choisissez un rôle</option>
+                        <!-- Loop to display role selection options -->
+                        {% for role in roles %}
+                            <option value="{{ role.id }}" {% if role.name != 'Admin' %} disabled {% endif %}>
+                                {{ role.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </fieldset>
+                
+                <!-- First name field (displayed based on selected role) -->
+                <fieldset class="firstNameField">
+                    <label for="firstName">Prénom :</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Prenom">
+                </fieldset>
+            
+                <!-- Last name field (displayed based on selected role) -->
+                <fieldset class="lastNameField">
+                    <label for="lastName">Nom :</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Nom">
+                </fieldset>
+            
+                <!-- Email field (displayed based on selected role) -->
+                <fieldset class="emailField">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" placeholder="Email">
+                </fieldset>
+            
+                <!-- Password field (displayed based on selected role) -->
+                <fieldset class="passwordField">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" placeholder="Mot de passe">
+                </fieldset>
+            
+                <!-- Confirm password field (displayed based on selected role) -->
+                <fieldset class="confirmPasswordField">
+                    <label for="confirmPassword">Confirmer le mot de passe :</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmer mot de passe">
+                </fieldset>
+            
+                <!-- Registration button -->
+                <button type="submit" id="submitButton">S'inscrire</button>
+            
+            </fieldset>
+        
+        </form>
+    </section>
+</div>
+
+{% endblock %}
+{% block footer %}
+    {% include "footer.html.twig" %}
+{% endblock %}

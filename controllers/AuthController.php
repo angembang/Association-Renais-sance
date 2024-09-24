@@ -9,7 +9,15 @@ class AuthController extends AbstractController
    * Displays the registration form with necessary data.
    */
   public function register(): void
-  {     
+  {
+    // Instantiate the role manager to retrieve all roles
+    $roleManager = new RoleManager();
+    $roles = $roleManager->findAll();
+
+    // Render the registration form with necessary data
+    $this->render("register.html.twig", [
+      "roles" => $roles
+    ]);     
   }
     
 
@@ -17,7 +25,78 @@ class AuthController extends AbstractController
    * Validates user registration data and creates a new user account based on provided information.
    */
   public function checkRegister(): void
-  {    
+  {
+    try {
+      // Check if the request method is POST
+      if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            
+        // Check if all required fields are present and not empty
+        $requiredFields = ["firstName", "lastName", "email", "password", "confirmPassword", "idRole", "csrf-token"];
+        foreach ($requiredFields as $field) {
+          if (!isset($_POST[$field]) || empty($_POST[$field])) {
+            $this->renderJson(["success" => false, "message" => "Veuillez remplir tous les champs"]);
+            return;
+          }
+        }
+
+        // Initialize CSRF token manager and validate the token
+        $tokenManager = new CSRFTokenManager();
+        if (!isset($_POST["csrf-token"]) || !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+          $this->renderJson(["success" => false, "message" => "Invalid CSRF token"]);
+          return;
+        }
+
+        // Check if passwords match
+        if ($_POST["password"] !== $_POST["confirmPassword"]) {
+          $this->renderJson(["success" => false, "message" => "Les mots de passe ne correspondent pas"]);
+          return;
+        }
+
+        // Validate password format
+        $passwordRegex = '/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()-_=+{};:,<.>]).{8,}$/';
+        if (!preg_match($passwordRegex, $_POST["password"])) {
+          $this->renderJson(["success" => false, "message" => "Le mot de passe doit contenir au moins 8 caractères, un chiffre, une lettre en majuscule, une lettre en minuscule et un caractère spécial."]);
+          return;
+        }
+
+        // Check if a role is selected and that it is "Admin"
+        $roleManager = new RoleManager();
+        $role = $roleManager->findRoleById($_POST["idRole"]);
+
+        if (!$role || $role->getName() !== "Admin") {
+          $this->renderJson(["success" => false, "message" => "Ce service est réservé aux administrateurs"]);
+          return;
+        }
+
+        // Check if a user with the given email already exists
+        $userManager = new UserManager();
+        if ($userManager->findUserByEmail($_POST["email"])) {
+          $this->renderJson(["success" => false, "message" => "L'utilisateur existe dejà"]);
+          return;
+        }
+
+        // Create a new user
+        $firstName = htmlspecialchars($_POST["firstName"]);
+        $lastName = htmlspecialchars($_POST["lastName"]);
+        $email = htmlspecialchars($_POST["email"]);
+        $hashedPassword = password_hash($_POST["password"], PASSWORD_BCRYPT);
+
+        // Instantiate and save the user
+        $user = new User(null, $lastName, $firstName, $email, $_POST["idRole"], $hashedPassword);
+        if ($userManager->createUser($user)) {
+          $this->render("registerSuccess.html.twig", []);
+        } else {
+          $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de la création de votre compte."]);
+        }
+
+      } else {
+        $this->renderJson(["success" => false, "message" => "The form was not submitted via POST method."]);
+      }
+
+    } catch (Exception $e) {
+      // Catch and return any unexpected exceptions
+      $this->renderJson(["success" => false, "message" => "An error occurred during the operation."]);
+    }  
   }
 
 
@@ -25,7 +104,9 @@ class AuthController extends AbstractController
    * Displays the login form with necessary data.
    */
   public function login(): void
-  {     
+  {
+    // Render the login form
+    $this->render("login.html.twig", []);     
   }
 
 
@@ -33,7 +114,75 @@ class AuthController extends AbstractController
    * Validates user credentials and performs login if successful.
    */
   public function checkLogin(): void
-  {    
+  { 
+    try {
+      if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        // Check if both email and password fields are set and not empty
+        if (isset($_POST["email"]) && !empty($_POST["email"]) &&
+        isset($_POST["password"]) && !empty($_POST["password"])) {
+  
+          // Validate CSRF token
+          $tokenManager = new CSRFTokenManager();
+          if (!isset($_POST["csrf-token"]) || !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+            $this->renderJson(["success" => false, "message" => "Jeton CSRF invalide"]);
+            return;
+          }
+  
+          // Instantiate user manager and find user by email
+          $userManager = new UserManager();
+          $email = htmlspecialchars($_POST["email"]);
+          $user = $userManager->findUserByEmail($email);
+  
+          // Check if user exists
+          if ($user) {
+            $userPassword = $user->getPassword();
+            $password = htmlspecialchars($_POST["password"]);
+  
+            // Verify the password
+            if (password_verify($password, $userPassword)) {
+              $userRoleId = $user->getRoleId();
+  
+              // Retrieve role information
+              $roleManager = new RoleManager();
+              $role = $roleManager->findRoleById($userRoleId);
+  
+              if ($role) {
+                $roleName = $role->getName();
+  
+                // Check if the role is Admin
+                if ($roleName === "Admin") {
+                  // Redirect to the admin page
+                  $this->render("adminHome.html.twig", []);
+                  return;
+                } else {
+                  $this->renderJson(["success" => false, "message" => "Vous n'avez pas les droits d'accès."]);
+                  return;
+                }
+              } else {
+                $this->renderJson(["success" => false, "message" => "Rôle introuvable."]);
+                return;
+              }
+            } else {
+              $this->renderJson(["success" => false, "message" => "Mot de passe incorrect."]);
+              return;
+            }
+          } else {
+            $this->renderJson(["success" => false, "message" => "L'utilisateur avec cet email n'existe pas."]);
+            return;
+          }
+        } else {
+          $this->renderJson(["success" => false, "message" => "Veuillez renseigner tous les champs obligatoires."]);
+          return;
+        }
+      } else {
+        $this->renderJson(["success" => false, "message" => "Le formulaire n'est pas soumis par la méthode POST."]);
+        return;
+      }
+      
+    } catch(Exception $e) {
+      error_log("an error occurs during the operation: ".$e->getMessage().$e->getCode());
+      $this->renderJson(["success" => false, "message" => "An error occurs during the operation"]);
+    }   
   }
 
 
@@ -108,13 +257,16 @@ class AuthController extends AbstractController
             $this->renderJson(["success" => true, "message" => "Membre enregistré avec succès"]);
           } else {
               $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de votre adhésion."]);
+              return;
           }
 
         } else {
           $this->renderJson(["success" => false, "message" => "Veuillez remplir tous les champs"]);
+          return;
         }
       } else {
         $this->renderJson(["success" => false, "message" => "Le formulaire n'est pas soumis par la méthode POST"]);
+        return;
       }
 
     } catch (Exception $e) {
