@@ -184,6 +184,86 @@ class AuthController extends AbstractController
       $this->renderJson(["success" => false, "message" => "An error occurs during the operation"]);
     }   
   }
+  
+
+  /**
+   * Displays the reset password form Page
+   */
+  public function resetPasswordForm(): void 
+  {
+    // Render the reset password page
+    $this->render("updateUserForm.html.twig", []);   
+  }
+
+
+  /**
+   * Validates the user information and updates the user's password based on the provided email.
+   */
+  public function checkResetPassword(): void 
+  {
+    try {
+      // Check if the request method is POST
+      if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+        // Check if all required fields are present and not empty
+        $requiredFields = ["email", "new-password", "confirm-password", "csrf-token"];
+        foreach ($requiredFields as $field) {
+          if (!isset($_POST[$field]) || empty($_POST[$field])) {
+            $this->renderJson(["success" => false, "message" => "Veuillez remplir tous les champs"]);
+            return;
+          }
+        }
+
+        // Initialize CSRF token manager and validate the token
+        $tokenManager = new CSRFTokenManager();
+        if (!isset($_POST["csrf-token"]) || !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+          $this->renderJson(["success" => false, "message" => "Invalid CSRF token"]);
+          return;
+        }
+
+        // Check if passwords match
+        if ($_POST["new-password"] !== $_POST["confirm-password"]) {
+          $this->renderJson(["success" => false, "message" => "Les mots de passe ne correspondent pas"]);
+          return;
+        }
+
+        // Validate password format
+        $passwordRegex = '/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()-_=+{};:,<.>]).{8,}$/';
+        if (!preg_match($passwordRegex, $_POST["new-password"])) {
+          $this->renderJson(["success" => false, "message" => "Le mot de passe doit contenir au moins 8 caractères, un chiffre, une lettre en majuscule, une lettre en minuscule et un caractère spécial."]);
+          return;
+        }
+
+        // Check if a user with the provided email exists
+        $userManager = new UserManager();
+        $user = $userManager->findUserByEmail($_POST["email"]);
+        if (!$user) {
+          $this->renderJson(["success" => false, "message" => "Aucun utilisateur trouvé avec cet email"]);
+          return;
+        }
+
+        // Hash the new password
+        $hashedPassword = password_hash($_POST["new-password"], PASSWORD_BCRYPT);
+
+        // Set the user's password 
+        $user->setPassword($hashedPassword);
+
+        // Update the user's password using updateUser method
+        if ($userManager->updateUser($user)) {
+          $this->renderJson(["success" => true, "message" => "Le mot de passe a été mis à jour avec succès"]);
+        } else {
+          $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de la mise à jour du mot de passe"]);
+        }
+
+    } else {
+        $this->renderJson(["success" => false, "message" => "Le formulaire n'a pas été soumis via la méthode POST"]);
+    }
+
+    } catch (Exception $e) {
+      // Catch and return any unexpected exceptions
+      $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de l'opération"]);
+    }
+  }
 
 
   /**

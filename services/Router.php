@@ -41,7 +41,15 @@ class Router
           break;
                     
         case "checkLogin":
-          $authController->checkLogin(); 
+          $authController->checkLogin();  
+          break;
+
+        case "reset-password-form":
+          $authController->resetPasswordForm();  
+          break;
+
+        case "check-reset-password":
+          $authController->checkResetPassword();  
           break;
 
         case "membership-register":
