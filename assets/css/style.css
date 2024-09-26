@@ -35,8 +35,10 @@ body {
 }
 
 .logo-container {
-  max-width: 105px;
+  max-width: 132px;
   height: auto;
+  margin: 0;
+  padding-left: 1rem;
 }
 
 .logo-container img {
@@ -66,23 +68,64 @@ body {
   padding-right: 20px; /* Adds space between the icon and the right edge */
 }
 
-ul.display-none {
-  display: none; /* Hide the menu initially for mobile */
+/* Styles pour le menu déroulant en mode modal */
+.none {
+  position: fixed;  
+  top: 0;
+  right: 0;  
+  width: 0; 
+  height: 60vh; 
+  background-color: white;
+  overflow: hidden;  
+  transition: width 0.3s ease-in-out;  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;  
+  align-items: center;
+  z-index: 999;  
+  padding: 0;  
+  border: none;
 }
 
-#menu ul {
-  list-style: none;
+#menu ul.open {
+  width: 40%;  
+}
+
+#menu ul li {
+  list-style: none;  
+  font-size: 1.5rem;
+  padding: 0; 
+  margin: 0;
 }
 
 #menu ul li a {
-  color: #5cadd3; 
-  text-decoration: none; 
-  font-size: 1.2rem;
+  color: #5cadd3;
+  text-decoration: none;
+  font-size: 1rem;
 }
-
 
 #menu ul li a:hover {
   color: blue;
+}
+
+ul.display-none {
+  display: none; /* Cache le menu initialement */
+}
+
+#menu ul li:first-child {
+  font-size: 1.1rem;
+  color: red;
+  cursor: pointer;
+}
+
+/* Style for the title when the menu is open */
+.small-title {
+  font-size: 1.2rem;  /* Reduces the title size */
+  transform: translateX(-2%);  /* Pushes the title to the left */
+  transition: all 0.3s ease-in-out;  /* Adds smooth animation for the transition */
+  white-space: normal;  /* Allows the title to wrap onto multiple lines */
+  word-wrap: break-word;  /* Breaks the words if they are too long */
+  text-align: center;  /* Centers the title */
 }
 
 
@@ -245,6 +288,75 @@ ul.display-none {
   border-radius: 5px;
 }
 
+
+/********************************** News page ********************************/
+.news-section {
+  display: flex;
+  background-color: #f5f5f5;
+  margin-top: 4rem;
+}
+
+.news-item {
+  width: 550px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  padding: 0.5rem; 
+  border: 1px solid #ddd; 
+  border-radius: 4px; 
+  background-color: white;
+}
+
+.news-item h2 {
+  font-size: 1.5rem; 
+  margin-bottom: 0.5rem; 
+  text-align: center;
+}
+
+.news-item img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem; 
+  display: block; 
+  max-height: 300px; 
+  object-fit: cover;
+  margin-left: auto;
+  margin-right: auto; 
+}
+.news-item p {
+  margin-bottom: 1rem; 
+}
+
+.news-item .youtube-video iframe {
+  width: 100%;
+  height: auto; 
+  aspect-ratio: 16/9;
+}
+
+.news-section p {
+  font-size: 1.2rem; 
+  text-align: center; 
+  margin-top: 2rem; 
+}
+.news-section .P-excerpt {
+  font-weight: 600;
+}
+
+.art h2 {
+margin-bottom: 1rem;
+}
+.art .date {
+  font-style: italic;
+  font-size: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.header-news-page {
+  top: 0; 
+}
+
 /******************************* footer ************************************/ 
 #map {    
 	/*background-color: #60aed1;*/
@@ -307,6 +419,10 @@ iframe {
   padding: 1rem;
 }
 
+#contact-form p {
+  font-family: "Roboto-Regular",Arial,sans-serif;
+}
+
 .footer {
   width: 100vw;
   display: flex;
@@ -351,6 +467,14 @@ iframe {
 
 /******************** Medias queries ******************************/
 @media screen and (min-width: 470px) {
+  #menu ul li a {
+    font-size: 1.2rem;
+  }
+
+  #menu ul li:first-child {
+    font-size: 1.3rem;
+  }
+
   .footer {
     height: 70px;
   }
@@ -398,12 +522,24 @@ iframe {
     font-size: 2rem;
   } 
 
+  .none {
+    height: 80vh;
+  }
+
   .image-asso {
     height: 250px  
   }
 
   .home-page section h2 {
     font-size: 28px;
+  }
+
+  .small-title {
+    transform: translateX(-10%);  /* Pushes the title to the left */
+  }
+
+  #menu ul li a {
+    font-size: 1.2rem;
   }
 }
 
@@ -413,6 +549,18 @@ iframe {
     font-size: 2.2rem;
   } 
   
+  .small-title {
+    transform: translateX(-15%);  /* Pushes the title to the left */
+  }
+
+  #menu ul li a {
+    font-size: 1.4rem;
+  }
+
+  #menu ul li:first-child {
+    font-size: 1.5rem;
+  }
+
   .image-asso {
     height: 285px;  
     width: 100vw;
@@ -486,12 +634,28 @@ iframe {
     color: black
   }
 
+  #contact-form p {
+    text-align: center;
+  }
+
 }
 
 
 @media screen and (min-width: 992px) {
   #menu h1  {
     font-size: 2.5rem;
+  }
+
+  .small-title {
+    transform: translateX(-35%);  /* Pushes the title to the left */
+  }
+
+  #menu ul li a {
+    font-size: 1.5rem;
+  }
+
+  #menu ul li:first-child {
+    font-size: 1.6rem;
   }
   
   .image-asso {
@@ -526,21 +690,36 @@ iframe {
     text-align: start;
     margin-right: 1.5rem;
   } 
+
+  .logo-container {
+    max-width: 135px;
+  }
   
+  /* Show the menu as a horizontal list */
   ul.display-none {
-    display: flex;
+    display: flex; /* Ensure the menu is displayed as flex */
     justify-content: space-around;
     align-items: center;
     margin: 0; 
     padding: 0;
   }
 
+  /* Hide the "Close" menu item */
+  ul.display-none li:first-of-type {
+    display: none;
+  }
+
+  #menu ul li a {
+    font-size: 1.2rem;
+  }
+
+  /* Hide the burger icon */
   #menu-icon {
     display: none;
   }
 
   .image-asso {
-    height: 345px  
+    height: 365px  
   }
 
   .home-page section h2 {
@@ -557,10 +736,14 @@ iframe {
     height: 13.8vh;
   }
 
+  .logo-container {
+    max-width: 122px;
+  }
+
   #menu h1  {
     font-size: 2.4rem;
     text-align: start;
-    margin-right: 2.7rem;
+    margin-right: 2rem;
   } 
 
   #menu ul li a { 
