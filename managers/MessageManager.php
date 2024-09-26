@@ -19,16 +19,20 @@ class MessageManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new message into the database
-      $query = $this->db->prepare("INSERT INTO messages (sender_id, recipients, subject, body, send_date) 
-      VALUES (:sender_id, :recipients, :subject, :body, :send_date)");
+      $query = $this->db->prepare("INSERT INTO messages (name, email, subject, message, status, created_at) 
+      VALUES (:name, :email, :subject, :message, :status, :created_at)");
+
+      // Format the DateTime objects to strings
+      $createdAtFormated = $message->getCreatedAt()->format('Y-m-d H:i:s');
 
       // Bind the parameters with their values.
       $parameters = [
-        ":sender_id" => $message->getSenderId(),
-        ":recipients" =>$message->getRecipients(),
+        ":name" => $message->getName(),
+        ":email" =>$message->getEmail(),
         ":subject" => $message->getSubject(),
-        ":body" => $message->getBody(),
-        ":send_date" => $message->getSendDate()
+        ":message" => $message->getMessage(),
+        ":status" => $message->getStatus(),
+        ":created_at" => $createdAtFormated
       ];
 
       // Execute the query with parameters.
@@ -95,52 +99,35 @@ class MessageManager extends AbstractManager
 
 
   /**
-   * Retrieves messages by its recipients
+   * Retrieves messages by its email
    * 
-   * @param string $recipients The recipients of the message.
+   * @param string $email The email of the message.
    * 
-   * @return array|null The retrieved messages or null if no message is found. 
+   * @return Message|null The retrieved messages or null if not found. 
    * 
    * @throws PDOException If an error occurs during the database operation.
    */
-  public function findMessagesByRecipients(String $recipients): ?array
+  public function findMessagesByEmail(String $email): ?Message
   {
     try {
-      // Prepare the SQL query to retrieve messages by their recipients.
-      $query = $this->db->prepare("SELECT * FROM messages WHERE recipients= :recipients");
+      // Prepare the SQL query to retrieve the message by its email.
+      $query = $this->db->prepare("SELECT * FROM messages WHERE email= :email");
 
       // Bind the parameter with its value.
       $parameter = [
-        ":recipients" => $recipients
+        ":email" => $email
       ];
 
       // Execute the query with the parameter
       $query->execute($parameter);
 
-      // Fetch message data from the database
-      $messagesData = $query->fetchAll(PDO::FETCH_ASSOC);
+      // Fetch the message data from the database
+      $messageData = $query->fetch(PDO::FETCH_ASSOC);
 
-      // Check if messages data is not empty
-      if($messagesData) {
-        $messages = [];
-        // Loop through each messagesdata
-        foreach($messagesData as $messageData) {
-          // Instantiate an message for each message data
-          $message = new Message(
-            $messageData["id"],
-            $messageData["sender_id"],
-            $messageData["recipients"],
-            $messageData["subject"],
-            $messageData["body"],
-            $messageData["send_date"]
-          );
-          // Add the instantiated message object to the message array
-          $messages[] = $message;
-        }
-        // Return the array of the message objects
-        return $messages;
-      }
-      // No message is found, return null.
+      // Check if message is found
+      if ($messageData) {
+        return $this->hydrateMessage($messageData); 
+      } 
       return null;
     
     } catch(PDOException $e) {
@@ -149,6 +136,44 @@ class MessageManager extends AbstractManager
     }  
   }
 
+
+  /**
+   * Retrieves messages by its email
+   * 
+   * @param string $email The email of the message.
+   * 
+   * @return Message|null The retrieved messages or null if not found. 
+   * 
+   * @throws PDOException If an error occurs during the database operation.
+   */
+  public function findMessagesByStatus(String $status): ?Message
+  {
+    try {
+      // Prepare the SQL query to retrieve the message by its email.
+      $query = $this->db->prepare("SELECT * FROM messages WHERE status= :status");
+
+      // Bind the parameter with its value.
+      $parameter = [
+        ":status" => $status
+      ];
+
+      // Execute the query with the parameter
+      $query->execute($parameter);
+
+      // Fetch the message data from the database
+      $messageData = $query->fetch(PDO::FETCH_ASSOC);
+
+      // Check if message is found
+      if ($messageData) {
+        return $this->hydrateMessage($messageData); 
+      } 
+      return null;
+    
+    } catch(PDOException $e) {
+      error_log("Failed to find a message" .$e->getMessage(). $e->getCode());
+      throw new PDOException("Failed to find a message");
+    }  
+  }
 
   /**
    * Retrieves all messages
@@ -177,11 +202,12 @@ class MessageManager extends AbstractManager
           // Instantiate an message for each message data
           $message = new Message(
             $messageData["id"],
-            $messageData["sender_id"],
-            $messageData["recipients"],
+            $messageData["name"],
+            $messageData["email"],
             $messageData["subject"],
-            $messageData["body"],
-            $messageData["send_date"]
+            $messageData["message"],
+            $messageData["status"],
+            $messageData["created_at"]
           );
           // Add the instantiated message object to the message array
           $messages[] = $message;
@@ -213,21 +239,23 @@ class MessageManager extends AbstractManager
     try {
       // Prepare the SQL query to update an message.
       $query = $this->db->prepare("UPDATE messages SET 
-      sender_id = :sender_id,
-      recipients = :recipients,
+      name = :name,
+      email = :email,
       subject = :subject,
-      body = :body,
-     send_date = :send_date
+      message = :message,
+      status = :status,
+     created_at = :created_at
       WHERE id = :id");
 
       // Bind parameters with their values
       $parameters = [
         ":id" => $message->getId(),
-        ":sender_id" => $message->getSenderId(),
-        ":recipients" => $message->getRecipients(),
+        ":name" => $message->getName(),
+        ":email" => $message->getEmail(),
         ":subject" => $message->getSubject(),
-        ":body" => $message->getBody(),
-        ":send_date" => $message->getSendDate()
+        ":message" => $message->getMessage(),
+        ":status" => $message->getStatus(),
+        ":created_at" => $message->getcreatedAt()
       ];
 
       // Execute the query with parameters
@@ -293,11 +321,12 @@ class MessageManager extends AbstractManager
       // Instantiate a new message with retrieved data
       $message = new Message(
         $messageData["id"],
-        $messageData["sender_id"],
-        $messageData["recipients"],
+        $messageData["name"],
+        $messageData["email"],
         $messageData["subject"],
-        $messageData["body"],
-        $messageData["send_date"]
+        $messageData["message"],
+        $messageData["status"],
+        $messageData["created_at"]
       );
       return $message;
     }
