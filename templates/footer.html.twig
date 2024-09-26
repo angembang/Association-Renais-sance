@@ -6,25 +6,26 @@
     </div>
     <!--contact form -->
         <div class="form-map">
-            <form id="contact-form">
-                <div class="head">
-                       <h3 class="headform">Contact Infos</h3>
-                    <address>
-                        <p><span id="bold">Association Renais'sance</span><br>7 Square Louis et Maurice de Broglie 35000 Rennes <br>
-                        <span id="tel">Tel</span> : 0749279774</p>
-                    </address>
-                   </div>
-                <input type="text" id="name" name="name" placeholder="Name">
+            <form action="index.php?route=check-contact-form" id="contact-form" method="POST">
+                <legend>Formulaire de contact</legend>
+                <!-- Token field -->
+                <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+                <!-- Name field -->
+                <input type="text" id="name" name="name" placeholder="Nom">
+                <!-- Email field -->
                 <input type="text" id="email" name="email" placeholder="Email">
-                <input type="text" id="subject" name="subject" placeholder="Subject">
+                <!-- subject field -->
+                <input type="text" id="subject" name="subject" placeholder="Sujet">
+                <!-- Message field -->
                 <textarea id="message" name="message" placeholder="Message"></textarea>
-                <input type="submit" value="Send Message" class="btnform">
+                <input type="submit" value="Envoyer" class="btnform">
+                <p> Pour toute demande urgente, veuillez nous appeler au <a href="tel:+33605678513">0605678513</a></p>
             </form>
         </div>
     </div>
 
     <div class="footer">
-        <!-- Social media links -->
+        <!--nav links -->
         <div class="i-foot">
             <a href="index.php?route=membership-register">Adhérer</a>
             <a href="index.php?route=donation">Faire un don</a>

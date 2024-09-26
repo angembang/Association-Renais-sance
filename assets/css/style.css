@@ -227,6 +227,24 @@ ul.display-none {
   margin-top: 1rem;
 }
 
+
+
+/******************************* message success page ****************************/
+.message-success-container {
+  text-align: center; 
+  padding: 50px; 
+}
+
+.message-success-container p a {
+  display: inline-block; 
+  margin-top: 20px; 
+  padding: 10px 20px; 
+  background-color: #007bff; 
+  color: #fff; 
+  text-decoration: none; 
+  border-radius: 5px;
+}
+
 /******************************* footer ************************************/ 
 #map {    
 	/*background-color: #60aed1;*/

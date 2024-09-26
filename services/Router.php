@@ -133,6 +133,10 @@ class Router
         case "contact":
           $pageController->contactPage();    
           break;
+
+        case "check-contact-form":
+          $authController->checkContactForm();    
+          break;
                               
         case "logout":
           $authController->logout();    

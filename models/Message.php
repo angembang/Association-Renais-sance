@@ -12,14 +12,14 @@ class Message
   private ?int $id;
 
   /**
-   * @var int The unique identifier of the sender.
+   * @var string The name of the message sender.
    */
-  private int $senderId;
+  private string $name;
 
   /**
-   * @var string The recipients of the message, stored as a comma-separated list of recipient IDs.
+   * @var string The email of the message.
    */
-  private string $recipients;
+  private string $email;
 
   /**
    * @var string The subject of the message.
@@ -29,30 +29,37 @@ class Message
   /**
    * @var string The body content of the message.
    */
-  private string $body;
+  private string $message;
+
+  /**
+   * @var string The status of the message.
+   */
+  private string $status;
 
   /**
    * @var DateTime The date and time when the message was sent.
    */
-  private DateTime $sendDate;
+  private DateTime $createdAt;
 
   /**
    * Message constructor
    * @param int|null $id The unique identifier of the message. Null for a new message.
-   * @param int $senderId The unique identifier of the sender.
-   * @param string $recipients The recipients of the message, stored as a comma-separated list of recipient IDs.
+   * @param string $name Thename of the sender.
+   * @param string $email The email of the sender.
    * @param string $subject The subject of the message.
-   * @param string $body The body content of the message.
-   * @param DateTime $sendDate The date and time when the message was sent.
+   * @param string $message The body content of the message.
+   * @param string $status The status of the message.
+   * @param DateTime $createdAt The date and time when the message was sent.
    */
-  public function __construct(?int $id, int $senderId, string $recipients, string $subject, string $body, DateTime $sendDate)
+  public function __construct(?int $id, string $name, string $email, string $subject, string $message, string $status, DateTime $createdAt)
   {
     $this->id = $id;
-    $this->senderId = $senderId;
-    $this->recipients = $recipients;
+    $this->name = $name;
+    $this->email = $email;
     $this->subject = $subject;
-    $this->body = $body;
-    $this->sendDate = $sendDate;
+    $this->message = $message;
+    $this->status = $status;
+    $this->createdAt = $createdAt;
   }
 
   /**
@@ -76,42 +83,42 @@ class Message
 
     
   /**
-   * Get the unique identifier of the sender.
+   * Get the name of the message.
    * 
-   * @return int The unique identifier of the sender.
+   * @return string The name of the message.
    */
-  public function getSenderId(): int 
+  public function getName(): string 
   {
-    return $this->senderId;
+    return $this->name;
   }
 
   /**
-   * Set the unique identifier of the sender.
-   * @param int $senderId The unique identifier of the sender.
+   * Set The name of the message.
+   * @param string $name The name of the message.
    */
-  public function setSenderId(int $senderId): void 
+  public function setName(string $name): void 
   {
-    $this->senderId = $senderId;
+    $this->name = $name;
   }
 
     
   /**
-   * Get the recipients of the message.
+   * Get the email of the message.
    * 
-   * @return string The recipients of the message, stored as a comma-separated list of recipient IDs.
+   * @return string The email of the message.
    */
-  public function getRecipients(): string 
+  public function getEmail(): string 
   {
-    return $this->recipients;
+    return $this->email;
   }
 
   /**
-   * Set the recipients of the message.
-   * @param string $recipients The recipients of the message, stored as a comma-separated list of recipient IDs.
+   * Set the email of the message.
+   * @param string $email The email of the message.
    */
-  public function setRecipients(string $recipients): void 
+  public function setEmail(string $email): void 
   {
-    $this->recipients = $recipients;
+    $this->email = $email;
   }
 
     
@@ -140,18 +147,38 @@ class Message
    * 
    * @return string The body content of the message.
    */
-  public function getBody(): string 
+  public function getMessage(): string 
   {
-    return $this->body;
+    return $this->message;
   }
 
   /**
    * Set the body content of the message.
    * @param string $body The body content of the message.
    */
-  public function setBody(string $body): void 
+  public function setMessage(string $message): void 
   {
-    $this->body = $body;
+    $this->message = $message;
+  }
+
+
+   /**
+   * Get the status of the message.
+   * 
+   * @return string The status of the message.
+   */
+  public function getStatus(): string 
+  {
+    return $this->status;
+  }
+
+  /**
+   * Set the status of the message.
+   * @param string $status The status of the message.
+   */
+  public function setStatus(string $status): void 
+  {
+    $this->status = $status;
   }
 
     
@@ -160,18 +187,18 @@ class Message
    * 
    * @return DateTime The date and time when the message was sent.
    */
-  public function getSendDate(): DateTime 
+  public function getCreatedAt(): DateTime 
   {
-    return $this->sendDate;
+    return $this->createdAt;
   }
 
   /**
    * Set the date and time when the message was sent.
-   * @param DateTime $sendDate The date and time when the message was sent.
+   * @param DateTime $createdAt The date and time when the message was sent.
    */
-  public function setSendDate(DateTime $sendDate): void 
+  public function setCreatedAt(DateTime $createdAt): void 
   {
-    $this->sendDate = $sendDate;
+    $this->createdAt = $createdAt;
   }
   
 }

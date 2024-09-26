@@ -41,7 +41,7 @@ class AuthController extends AbstractController
 
         // Initialize CSRF token manager and validate the token
         $tokenManager = new CSRFTokenManager();
-        if (!isset($_POST["csrf-token"]) || !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+        if (!$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
           $this->renderJson(["success" => false, "message" => "Invalid CSRF token"]);
           return;
         }
@@ -94,8 +94,19 @@ class AuthController extends AbstractController
       }
 
     } catch (Exception $e) {
-      // Catch and return any unexpected exceptions
-      $this->renderJson(["success" => false, "message" => "An error occurred during the operation."]);
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
     }  
   }
 
@@ -180,8 +191,19 @@ class AuthController extends AbstractController
       }
       
     } catch(Exception $e) {
-      error_log("an error occurs during the operation: ".$e->getMessage().$e->getCode());
-      $this->renderJson(["success" => false, "message" => "An error occurs during the operation"]);
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
     }   
   }
   
@@ -260,8 +282,19 @@ class AuthController extends AbstractController
     }
 
     } catch (Exception $e) {
-      // Catch and return any unexpected exceptions
-      $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de l'opération"]);
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
     }
   }
 
@@ -350,7 +383,19 @@ class AuthController extends AbstractController
       }
 
     } catch (Exception $e) {
-        $this->renderJson(["success" => false, "message" => $e->getMessage()]); 
+        // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit(); 
     }
     
   }
@@ -527,7 +572,7 @@ class AuthController extends AbstractController
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
-      // Optionally set the HTTP response code for better error handling
+      // Set the HTTP response code for better error handling
       http_response_code($code);
 
       // Render an error page with the error details
@@ -815,12 +860,96 @@ class AuthController extends AbstractController
       $this->render("newsSuccess.html.twig", []);
 
     } catch (Exception $e) {
-      error_log("An error occurred: " . $e->getMessage());
-      http_response_code(500);
-      $this->render("errorPage.html.twig", ["code" => 500]);
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
     }
     
   }
+
+
+  /**
+   * Validates contact form data and creates a new message based on provided information.
+   */
+  public function checkContactForm(): void 
+  {
+    try {
+      // Check if the request method is POST
+      if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            
+        // Check if all required fields are present and not empty
+        $requiredFields = ["name", "email", "subject", "message", "csrf-token"];
+        foreach ($requiredFields as $field) {
+          if (!isset($_POST[$field]) || empty($_POST[$field])) {
+            $this->renderJson(["success" => false, "message" => "Veuillez remplir tous les champs"]);
+            return;
+          }
+        }
+
+        // Initialize CSRF token manager and validate the token
+        $tokenManager = new CSRFTokenManager();
+        if (!$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
+          $this->renderJson(["success" => false, "message" => "Invalid CSRF token"]);
+          return;
+        }
+        
+        // Initialize HTMLPurifier to sanitize and clean user input from harmful HTML content
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+
+        // Retrieve and sanitize the input data
+        $subject = $purifier->purify($_POST["subject"]);
+        $message = $purifier->purify($_POST["message"]);
+
+        $name = htmlspecialchars($_POST["name"]);
+        $email = htmlspecialchars($_POST["email"]);
+
+        $status = "Nouveau";
+        $createdAt = new DateTime();
+
+        // Create a message model
+        $messageModel = new Message(null, $name, $email, $subject, $message, $status, $createdAt);
+
+        // Instantiate the message manager to create a Message object
+        $messageManager = new MessageManager();
+        $messageCreated = $messageManager->createMessage( $messageModel);
+
+        if(!$messageCreated) {
+          $this->renderJson(["success" => false, "message" => "Echec lors de l'envoi de message."]);
+        } else {
+          $this->render("messageSuccess.html.twig", []);
+        }
+
+      } else {
+        $this->renderJson(["success" => false, "message" => "The form was not submitted via POST method."]);
+      }
+
+    } catch (Exception $e) {
+      // Log the error details for debugging
+      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      // Capture the error code for the error page
+      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
+     
+      // Set the HTTP response code for better error handling
+      http_response_code($code);
+
+      // Render an error page with the error details
+      $this->render("errorPage.html.twig", [
+        "code" => $code,
+      ]);
+      exit();
+    }  
+  } 
      
 
   /**
