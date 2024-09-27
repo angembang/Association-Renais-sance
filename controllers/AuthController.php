@@ -362,24 +362,56 @@ class AuthController extends AbstractController
           $address = htmlspecialchars($_POST["address"]);
           $postalCode = htmlspecialchars($_POST["postalCode"]);
           $createdAt = date('Y-m-d H:i:s');
+          $companyName = isset($_POST["companyName"]) ? htmlspecialchars($_POST["companyName"]) : null;
+          $logo = null; // Initialize logo as null
 
-          $membership = new Membership(null, $civility, $idRole, $firstName, $lastName, $email, $phone, $address, $postalCode, $createdAt);
+          // Retrieve role name
+          $roleManager = new RoleManager();
+          $role = $roleManager->findRoleById($idRole);
+          $roleName = $role->getName();
+
+          // Check if the role is "Partenaire"
+          if ($roleName === "Partenaire") {
+            if (empty($_FILES['logo']['name'])) {
+              $this->renderJson(["success" => false, "message" => "Veuillez ajouter le logo de l'entreprise"]);
+              return; 
+          }
+          $allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/avif'];
+          $uploadDir = realpath(__DIR__ . '/../uploads/images');
+
+          if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
+            $this->renderJson(["success" => false, "message" => "Échec de la création du répertoire des images."]);
+            return;
+          }
+          if (!in_array($_FILES['logo']['type'], $allowedImageTypes)) {
+            $this->renderJson(["success" => false, "message" => "Le format de l'image n'est pas valide."]);
+            return;
+          }
+          $imagePath = $uploadDir . '/' . basename($_FILES['logo']['name']);
+          if (!move_uploaded_file($_FILES['logo']['tmp_name'], $imagePath)) {
+            $this->renderJson(["success" => false, "message" => "Erreur lors du téléchargement de l'image."]);
+            return;
+          } else {
+            $logo = '/uploads/images/' . basename($_FILES['logo']['name']);
+          }
+          }
+          // Create membership object
+          $membership = new Membership(null, $civility, $idRole, $firstName, $lastName, $email, $phone, $address, $postalCode, $createdAt, $logo, $companyName);
           $createdMembership = $membershipManager->createMembership($membership);
 
           if ($createdMembership) {
-            $this->renderJson(["success" => true, "message" => "Membre enregistré avec succès"]);
+            $this->render("membershipSuccess.html.twig", [
+              "roleName" => $roleName
+            ]);
           } else {
-              $this->renderJson(["success" => false, "message" => "Une erreur s'est produite lors de votre adhésion."]);
-              return;
+            $this->renderJson([
+              "success" => false, "message" => "Une erreur s'est produite lors de votre adhésion."]);
           }
-
         } else {
           $this->renderJson(["success" => false, "message" => "Veuillez remplir tous les champs"]);
-          return;
         }
       } else {
         $this->renderJson(["success" => false, "message" => "Le formulaire n'est pas soumis par la méthode POST"]);
-        return;
       }
 
     } catch (Exception $e) {

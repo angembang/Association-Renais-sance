@@ -18,8 +18,8 @@ class MembershipManager extends AbstractManager
   {
     try {
       // Prepare the SQL query to insert a new membership into the database
-      $query = $this->db->prepare("INSERT INTO memberships ( civility, role_id, first_name, last_name, email, phone,  address, postal_code, created_at) 
-      VALUES (:civility, :role_id, :first_name, :last_name, :email, :phone, :address, :postal_code, :created_at)");
+      $query = $this->db->prepare("INSERT INTO memberships ( civility, role_id, first_name, last_name, email, phone,  address, postal_code, created_at, logo, company_name) 
+      VALUES (:civility, :role_id, :first_name, :last_name, :email, :phone, :address, :postal_code, :created_at, :logo, :company_name)");
 
       // Bind the parameters with their values.
       $parameters = [
@@ -31,7 +31,9 @@ class MembershipManager extends AbstractManager
         ":created_at" => $membership->getCreatedAt(),
         ":civility" => $membership->getCivility(),
         ":role_id" => $membership->getRoleId(),
-        ":postal_code" => $membership->getPostalCode()
+        ":postal_code" => $membership->getPostalCode(),
+        ":logo" => $membership->getLogo(),
+        ":company_name" =>$membership->getCompanyName()
       ];
 
       // Execute the query with parameters.
@@ -217,7 +219,9 @@ class MembershipManager extends AbstractManager
             $membershipData["phone"],
             $membershipData["address"],
             $membershipData["postal_code"],
-            $membershipData["created_at"]
+            $membershipData["created_at"],
+            $membershipData["logo"],
+            $membershipData["company_name"]
           );
           // Add the instantiated membership object to the memberships array
           $memberships[] = $membership;
@@ -270,7 +274,9 @@ class MembershipManager extends AbstractManager
             $membershipData["phone"],
             $membershipData["address"],
             $membershipData["postal_code"],
-            $membershipData["created_at"]
+            $membershipData["created_at"],
+            $membershipData["logo"],
+            $membershipData["company_name"]
           );
           // Add the instantiated membership object to the memberships array
           $memberships[] = $membership;
@@ -310,7 +316,9 @@ class MembershipManager extends AbstractManager
       postal_code = :postal_code,
       created_at = :created_at,
       civility = :civility,
-      role_id = :role_id
+      role_id = :role_id,
+      logo = :logo,
+      company_name = :company_name
       WHERE id = :id");
 
       // Bind parameters with their values
@@ -324,7 +332,9 @@ class MembershipManager extends AbstractManager
         ":postal_code" => $membership->getPostalCode(),
         ":created_at" => $membership->getCreatedAt(),
         ":civility" => $membership->getCivility(),
-        ":role_id" => $membership->getRoleId()
+        ":role_id" => $membership->getRoleId(),
+        ":logo" => $membership->getLogo(),
+        ":company_name" => $membership->getCompanyName()
       ];
 
       // Execute the query with parameters
@@ -398,7 +408,9 @@ class MembershipManager extends AbstractManager
         $membershipData["phone"],
         $membershipData["address"],
         $membershipData["postal_code"],
-        $membershipData["created_at"]
+        $membershipData["created_at"],
+        $membershipData["logo"],
+        $membershipData["company_name"]
       );
       return $membership;
     }

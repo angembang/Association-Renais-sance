@@ -55,6 +55,16 @@ class Membership
    * @var string the membership created date. 
    */ 
   private string $createdAt;
+
+  /**
+   * @var string|null the logo of the membership. Null if not provided.
+   */
+  private ?string $logo;
+
+  /**
+   * @var string|null the company name of the membership. Null if not provided.
+   */
+  private ?string $companyName;
   
 
   /**
@@ -69,9 +79,11 @@ class Membership
    * @param string $address The address of the membership.
    * @param string $postalCode The postal code of the membership.
    * @param string $createdAt The membership created date.
+   * @param string|null $logo the logo of the membership. Null if not provided.
+   * @param string|null $companyName the company name of the membership. Null if not provided.
    *
    */
-  public function __construct(?int $id, string $civility, int $roleId, string $firstName, string $lastName, string $email, string $phone, string $address, string $postalCode, string $createdAt)
+  public function __construct(?int $id, string $civility, int $roleId, string $firstName, string $lastName, string $email, string $phone, string $address, string $postalCode, string $createdAt,?string $logo, ?string $companyName)
   {
     $this->id = $id;
     $this->civility = $civility;
@@ -83,6 +95,8 @@ class Membership
     $this->address = $address;
     $this->postalCode = $postalCode;
     $this->createdAt = $createdAt;
+    $this->logo = $logo;
+    $this->companyName = $companyName;
     
   }
 
@@ -269,9 +283,9 @@ class Membership
 
 
    /**
-   * Get the civility of the user
+   * Get the civility of the membership
    * 
-   * @return string The civility of the user. 
+   * @return string The civility of the membership. 
    */
   public function getCivility(): string 
   {
@@ -279,12 +293,51 @@ class Membership
   }
 
   /**
-   * Set the civility of the user.
-   * @param string $civility The civility of the user. 
+   * Set the civility of the membership.
+   * @param string $civility The civility of the membership. 
    */
   public function setCivility(string $civility): void 
   {
     $this->civility = $civility;
+  }
+
+
+  /**
+   * Get the civility of the membership
+   * 
+   * @return string|null The logo of the membership. Null if not provided. 
+   */
+  public function getLogo(): ?string 
+  {
+    return $this->logo;
+  }
+  
+  /**
+   * Set the logo of the membership.
+   * @param ?string $logo The civility of the membership. 
+   */
+  public function setLogo(?string $logo): void 
+  {
+    $this->logo = $logo;
+  }
+
+
+  /**
+   * Get the company name of the membership
+   * @return string|null The company name of the membership. Null if not provided. 
+   */
+  public function getCompanyName(): ?string 
+  {
+    return $this->companyName;
+  }
+  
+  /**
+   * Set the company name of the membership.
+   * @param ?string $companyName The company name of the membership. 
+   */
+  public function setCompanyName(?string $companyName): void 
+  {
+    $this->companyName = $companyName;
   }
 
 

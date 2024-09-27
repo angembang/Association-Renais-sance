@@ -1,0 +1,18 @@
+{% block main %}
+    <div class="success-message">
+        {% if roleName == "Partenaire" %}
+            <p>Votre demande de partenariat est en cours de traitement. Merci pour votre intérêt !</p>
+        {% elseif roleName == "Bénévole" %}
+            <p>Adhésion réussie ! Vous êtes désormais bénévole de l'association Renais'sance. Merci pour votre engagement !</p>
+            {% elseif roleName == "Membre associé" %}
+            <p>Bienvenue en tant que membre associé ! Nous sommes ravis de vous avoir parmi nous.</p>
+        {% elseif roleName == "membre d'honneur" %}
+            <p>Félicitations ! Vous êtes désormais membre d'honneur de l'association Renais'sance. Merci pour votre soutien exceptionnel !</p>
+        {% else %}
+            <p>Merci pour votre adhésion !</p>
+        {% endif %}
+        
+        <p>Nous vous contacterons bientôt pour les prochaines étapes.</p>
+        <a href="index.php?route=home" class="button">Retour à l'accueil</a>
+    </div>
+{% endblock %}

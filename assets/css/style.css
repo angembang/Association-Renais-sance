@@ -35,10 +35,10 @@ body {
 }
 
 .logo-container {
-  max-width: 132px;
+  max-width: 115px;
   height: auto;
   margin: 0;
-  padding-left: 1rem;
+  margin-left:0;
 }
 
 .logo-container img {
@@ -48,11 +48,11 @@ body {
 }
 
 #menu h1 {
-  font-family: 'Merienda', cursive;
+   font-family: 'Merienda', cursive /*'Lobster', cursive*/; 
   font-size: 1.6rem;
   margin: 0 auto; /* Centering the title */
   text-align: center;
-  font-weight: bold;
+  /*font-weight: bold;*/
   color: #0066cc;
 }
 
@@ -357,6 +357,53 @@ margin-bottom: 1rem;
   top: 0; 
 }
 
+
+/****************************** Membership fom page *******************************/
+.membership-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.membership-form h2{
+text-align: center;
+}
+
+.membership-form label {
+  display: none;
+}
+
+.membership-form form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  width: 90%;
+}
+
+.membership-form form fieldset {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.membership-form form fieldset input, 
+.membership-form form fieldset select,
+.membership-form form button {
+    width: 80%;
+    padding: 0.6rem;
+  }
+
+  .membership-form form button {
+    color: white;
+    background-color: #5cadd3;
+  }
+
 /******************************* footer ************************************/ 
 #map {    
 	/*background-color: #60aed1;*/
@@ -475,6 +522,13 @@ iframe {
     font-size: 1.3rem;
   }
 
+  .membership-form form fieldset input, 
+  .membership-form form fieldset select,
+  .membership-form form button {
+    width: 70%;
+    padding: 0.5rem;
+  }
+
   .footer {
     height: 70px;
   }
@@ -541,6 +595,13 @@ iframe {
   #menu ul li a {
     font-size: 1.2rem;
   }
+
+  .membership-form form fieldset input, 
+  .membership-form form fieldset select,
+  .membership-form form button {
+    width: 60%;
+    padding: 0.5rem;
+  }
 }
 
 
@@ -590,6 +651,13 @@ iframe {
   .actuality-section {
     width: 900px;
     margin: auto;
+  }
+
+  .membership-form form fieldset input, 
+  .membership-form form fieldset select,
+  .membership-form form button {
+    width: 50%;
+    padding: 0.5rem;
   }
 
   /********************** footer ************/
@@ -673,6 +741,13 @@ iframe {
   .home-page section h3 {
     font-size: 27px;
   }
+
+  .membership-form form fieldset input, 
+  .membership-form form fieldset select,
+  .membership-form form button {
+    width: 40%;
+    padding: 0.5rem;
+  }
 }
 
 
@@ -682,7 +757,7 @@ iframe {
     grid-template-columns: 1fr 3fr 4fr;;
     align-items: center;
     gap: 1rem;
-    height: 15.7vh;
+    height: 14vh;
   }
 
   #menu h1  {
@@ -692,7 +767,7 @@ iframe {
   } 
 
   .logo-container {
-    max-width: 135px;
+    max-width: 107px;
   }
   
   /* Show the menu as a horizontal list */
@@ -733,11 +808,6 @@ iframe {
     display: grid;
     grid-template-columns: 10% 35% 50%;
     gap: 1rem;
-    height: 13.8vh;
-  }
-
-  .logo-container {
-    max-width: 122px;
   }
 
   #menu h1  {
