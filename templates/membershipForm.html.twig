@@ -9,9 +9,7 @@
 {% endblock %}
 
 {% block main %}
-    <section class="membership-form">
-        <h2 class="membership-form-h">Formulaire d'adhésion et de partenariat</h2>
-    
+    <div class="membership-form">
         <!-- Modal -->
         <div id="registerMessageModal" class="registerModal" style="display:none;">
             <div class="register-modal-content">
@@ -19,90 +17,94 @@
                 <p id="registerModalContent"></p>
             </div>
         </div>
-    
-        <!-- Registration Form -->
-        <form action="index.php?route=check-membership-register" method="POST" id="registerForm" enctype="multipart/form-data">
-            <!-- Token field -->
-            <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
 
-            <!-- civility selection field -->
-            <fieldset id="civility">
-                <label for="civility">Civilité:</label>
-                <select id="civility" name="civility" required>
-                    <option value="" disabled selected>Choisissez la civilité</option>
-                    <option value="Madame">Madame</option>
-                    <option value="Monsieur">Monsieur</option>
-                    <option value="Autre">Autre</option>
-                </select>
-            </fieldset>
+        <div class="form-member-container">
+            <!-- Registration Form -->
+            <form action="index.php?route=check-membership-register" method="POST" id="registerForm" enctype="multipart/form-data">
+                <legend class="membership-form-h">Formulaire d'adhésion et de partenariat</legend>
+                <!-- Token field -->
+                <input type="hidden" name="csrf-token" id="csrf-token" value="{{ csrf_token }}" >
+
+                <!-- civility selection field -->
+                <fieldset id="civility">
+                    <label for="civility">Civilité:</label>
+                    <select id="civility" name="civility" required>
+                        <option value="" disabled selected>Choisissez la civilité</option>
+                        <option value="Madame">Madame</option>
+                        <option value="Monsieur">Monsieur</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </fieldset>
             
-            <!-- Role selection field -->
-            <fieldset id="role">
-                <label for="idRole">Rôle :</label>
-                <select id="idRole" name="idRole" required>
-                <option value="" disabled selected>Choisissez un rôle</option>
-                <!-- Loop to display role selection options -->
-                {% for role in roles %}
-                    <option value="{{ role.id }}">
-                        {{ role.name }}
-                    </option>
-                {% endfor %}
-                </select>
-            </fieldset>
+                <!-- Role selection field -->
+                <fieldset id="role">
+                    <label for="idRole">Rôle :</label>
+                    <select id="idRole" name="idRole" required>
+                        <option value="" disabled selected>Choisissez un rôle</option>
+                        <!-- Loop to display role selection options -->
+                        {% for role in roles %}
+                        <option value="{{ role.id }}">
+                             {{ role.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </fieldset>
                 
-            <!-- First name field -->
-            <fieldset class="firstNameField">
-                <label for="firstName">Prénom :</label>
-                <input type="text" id="firstName" name="firstName" placeholder="Prénom" required>
-            </fieldset>
+                <!-- First name field -->
+                <fieldset class="firstNameField">
+                    <label for="firstName">Prénom :</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Prénom" required>
+                </fieldset>
             
-            <!-- Last name field -->
-            <fieldset class="lastNameField">
-                <label for="lastName">Nom :</label>
-                <input type="text" id="lastName" name="lastName" placeholder="Nom" required>
-            </fieldset>
+                <!-- Last name field -->
+                <fieldset class="lastNameField">
+                    <label for="lastName">Nom :</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Nom" required>
+                </fieldset>
             
-            <!-- Email field -->
-            <fieldset class="emailField">
-                <label for="email">Email :</label>
-                <input type="email" id="email" name="email" placeholder="Email" required>
-            </fieldset>
+                <!-- Email field -->
+                <fieldset class="emailField">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </fieldset>
             
-            <!-- Phone field -->
-            <fieldset class="phoneField">
-                <label for="phone">Numéro de téléphone:</label>
-                <input type="tel" id="phone" name="phone" placeholder="Numéro de téléphone" required>
-            </fieldset>
+                <!-- Phone field -->
+                <fieldset class="phoneField">
+                    <label for="phone">Numéro de téléphone:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Numéro de téléphone" required>
+                </fieldset>
             
-            <!-- Address field -->
-            <fieldset class="addressField">
-                <label for="address">Adresse :</label>
-                <input type="text" id="address" name="address" placeholder="Adresse" required>
-            </fieldset>
+                <!-- Address field -->
+                <fieldset class="addressField">
+                    <label for="address">Adresse :</label>
+                    <input type="text" id="address" name="address" placeholder="Adresse" required>
+                </fieldset>
 
-            <!-- Postal code field -->
-            <fieldset class="postalCodeField">
-               <label for="postalCode">Code postal:</label>
-                <input type="text" id="postalCode" name="postalCode" placeholder="code postal" required>
-            </fieldset>
+                <!-- Postal code field -->
+                <fieldset class="postalCodeField">
+                   <label for="postalCode">Code postal:</label>
+                    <input type="text" id="postalCode" name="postalCode" placeholder="code postal" required>
+                </fieldset>
 
-            <!-- Company Name field (hidden initially) -->
-            <fieldset class="companyNameField" id="companyNameField" style="display: none;">
-                <label for="companyName">Nom de l'entreprise :</label>
-                <input type="text" id="companyName" name="companyName" placeholder="Nom de l'entreprise">
-            </fieldset>
+                <!-- Company Name field (hidden initially) -->
+                <fieldset class="companyNameField" id="companyNameField" style="display: none;">
+                    <label for="companyName">Nom de l'entreprise :</label>
+                    <input type="text" id="companyName" name="companyName" placeholder="Nom de l'entreprise">
+                </fieldset>
 
-            <!-- Logo field (hidden initially) -->
-            <fieldset class="logoField" id="logoField" style="display: none;">
-                <label for="logo">Logo :</label>
-                <input type="file" id="logo" name="logo" accept="image/*">
-            </fieldset>
+                <!-- Logo field (hidden initially) -->
+                <fieldset class="logoField" id="logoField" style="display: none;">
+                    <label for="logo">Logo :</label>
+                    <input type="file" id="logo" name="logo" accept="image/*">
+                </fieldset>
             
-            <!-- Registration button -->
-            <button type="submit" id="submitButton">Adhérer</button>
+                <!-- Registration button -->
+                <button type="submit" id="submitButton">Adhérer</button>
         
-        </form>
-    </section>
+            </form>
+        </div>
+    
+    </div>
 
 {% endblock %}
 
