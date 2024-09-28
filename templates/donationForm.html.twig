@@ -15,7 +15,7 @@
 
     <!-- Display a payment form -->
     <form id="payment-form" class="main-donation">
-        <h1>Faire un don à l'association renais'sance</h1>
+        <h2>Faire un don à l'Association Renais'sance</h2>
         <!-- Field to choose if the donation is anonymous -->
         <fieldset>
             <legend>Souhaitez-vous que votre don soit anonyme ?</legend>
@@ -82,8 +82,9 @@
         
         <div id="payment-message" class="hidden"></div>
     </form>
-    
-    <script src="./assets/js/checkout.js" defer></script>
 
 {% endblock %}
-{% block scripts %}<script src="./assets/js/donation.js"></script>{% endblock %}
+{% block scripts %}
+    <script src="./assets/js/donation.js"></script>
+    <script src="./assets/js/checkout.js"></script>
+{% endblock %}

@@ -278,14 +278,25 @@ ul.display-none {
   padding: 50px; 
 }
 
-.message-success-container p a {
+.message-success-container p a, 
+.donation-success-container a {
   display: inline-block; 
   margin-top: 20px; 
   padding: 10px 20px; 
-  background-color: #007bff; 
+  background-color: #5cadd3; 
   color: #fff; 
   text-decoration: none; 
   border-radius: 5px;
+}
+
+.message-success-container p , 
+.donation-success-container p {
+  font-size: 1.4rem;
+}
+
+.message-success-container p a, 
+.donation-success-container a {
+  font-size: 1.4rem;
 }
 
 
@@ -416,6 +427,20 @@ text-align: center;
     background-color: #e2e3e5;
     font-size: 1.2rem;
   }
+
+
+  /*************************  Donation success page ****************************/
+  .donation-success-container {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Centre le texte des paragraphes */
+    margin: 0 auto; /* Centrer le conteneur */
+  }
+
+  
 
 /******************************* footer ************************************/ 
 #map {    
