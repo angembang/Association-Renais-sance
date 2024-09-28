@@ -290,12 +290,14 @@ ul.display-none {
 }
 
 .message-success-container p , 
-.donation-success-container p {
+.donation-success-container p, 
+.success-message p {
   font-size: 1.4rem;
 }
 
 .message-success-container p a, 
-.donation-success-container a {
+.donation-success-container a, 
+.success-message a {
   font-size: 1.4rem;
 }
 
@@ -429,15 +431,16 @@ text-align: center;
   }
 
 
-  /*************************  Donation success page ****************************/
-  .donation-success-container {
+  /*************************  Donation success page  membership success page****************************/
+  .donation-success-container, 
+  .success-message {
     width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center; /* Centre le texte des paragraphes */
-    margin: 0 auto; /* Centrer le conteneur */
+    text-align: center;
+    margin: 0 auto; 
   }
 
   
