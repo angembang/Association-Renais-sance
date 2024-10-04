@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@300&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -270,16 +272,50 @@ ul.display-none {
   margin-top: 1rem;
 }
 
+.partenair-info {
+  display: flex;
+  justify-content: start; 
+  flex-wrap: nowrap; 
+  overflow: hidden; 
+  position: relative;
+  width: 100%; 
+  animation: scroll 20s linear infinite; 
+}
+
+.part-img {
+  width: 150px; 
+  margin-right: 4rem; 
+}
+
+.part-img img {
+  max-width: 100%; 
+  height: auto;
+  display: block; 
+}
+
+@keyframes scroll {
+  from {
+      transform: translateX(100%); 
+  }
+  to {
+      transform: translateX(-100%); 
+  }
+}
+
 
 
 /******************************* message success page ****************************/
-.message-success-container {
+.message-success-container, .error-page {
   text-align: center; 
   padding: 50px; 
 }
 
 .message-success-container p a, 
-.donation-success-container a {
+.donation-success-container a, 
+.about-page .btn-about a:last-child, 
+.legacy-page .btn-about a:last-child, 
+.error-page a, 
+.success-message a.button  {
   display: inline-block; 
   margin-top: 20px; 
   padding: 10px 20px; 
@@ -289,15 +325,20 @@ ul.display-none {
   border-radius: 5px;
 }
 
+
 .message-success-container p , 
 .donation-success-container p, 
-.success-message p {
+.success-message p, 
+.eventRegistration-success p, 
+.error-page p {
   font-size: 1.4rem;
 }
 
 .message-success-container p a, 
 .donation-success-container a, 
-.success-message a {
+.success-message a, 
+.eventRegistration-success p a, 
+.error-page a {
   font-size: 1.4rem;
 }
 
@@ -305,8 +346,14 @@ ul.display-none {
 /********************************** News page ********************************/
 .news-section {
   display: flex;
+  flex-direction: column;
   background-color: #f5f5f5;
   margin-top: 4rem;
+  gap: 2rem;
+  padding-bottom: 0;
+  flex-wrap: wrap;
+  justify-content: center; 
+  align-items: start;
 }
 
 .news-item {
@@ -373,11 +420,20 @@ margin-bottom: 1rem;
 
 /****************************** Membership fom page *******************************/
 .membership-form {
+  font-family: 'Merienda', cursive;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  align-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-image: url("../images/logo-asso-renais-sance.jpg");
+  background-size: contain; /* Makes the background image cover the entire area */
+  background-position: center; /* Centers the image */
+  background-repeat: repeat; /* Prevents the image from repeating */
+  margin: 0;
 }
 
 .membership-form .form-member-container {
@@ -386,13 +442,24 @@ margin-bottom: 1rem;
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  margin: 1rem;
-  width: 90%;  
-  background-color: #60aed166;
+  margin: 1rem; 
+  width: 40vw;
+  min-width: 500px;
+  align-self: center;
+  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
+    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+  border-radius: 7px;
+  background-color: white;
+  
 }
 
 .membership-form form legend{
 text-align: center;
+font-size: 1.8rem;
+}
+
+.membership-form form legend.label-question {
+  font-size: 1.2rem;
 }
 
 .membership-form label {
@@ -420,30 +487,201 @@ text-align: center;
 .membership-form form fieldset input, 
 .membership-form form fieldset select,
 .membership-form form button {
-    width: 100%;
-    padding: 0.6rem;
+  width: 100%;
+  padding: 0.6rem;
   }
 
-  .membership-form form button {
-    color: black;
-    background-color: #e2e3e5;
-    font-size: 1.2rem;
-  }
+.membership-form form button {
+  color: black;
+  background-color: #e2e3e5;
+  font-size: 1.2rem;
+}
+
+.membership-form form fieldset.paymentQuestionField, 
+.membership-form form fieldset.membershipFeeField {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  width: 80%;
+}
+
+.membership-form form fieldset.membershipFeeField {
+  margin-bottom: 1rem;
+}
+
+.alert-message {
+  display: none; /* Masqué par défaut */
+  background-color: #f8d7da; /* Couleur de fond pour les erreurs */
+  color: #721c24; /* Couleur du texte */
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #f5c6cb; /* Bordure rouge pour les erreurs */
+  border-radius: 5px;
+}
+
 
 
   /*************************  Donation success page  membership success page****************************/
-  .donation-success-container, 
-  .success-message {
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin: 0 auto; 
-  }
+.donation-success-container, 
+.success-message, 
+.about-page, 
+.eventRegistration-success, 
+.error-page {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto; 
+}
 
+
+
+  /************************************ About page *****************************************************/
+.about-page {
+  gap: 1rem;
+  font-size: 1.4rem;
+  padding: 1rem;
+  background-color: #f3f3f3;
+  border-radius: 7px;
+  width: 100%;
+}
+
+.about-page h2 {
+  font-size: 2rem;
+}
+
+.about-page div img {
+  width: 150px;
+  height: auto;
+}
+
+
+  /************************************ Legacy policy page ***********************************/
+.legacy-page ul {
+  list-style: none;
+} 
+.legacy-page {
+  background-color: #f9f9f9;
+  font-size: 1.2rem;
+}
   
+
+.legacy-page h2, .legacy-page h3, .legacy-page h4, .legacy-page h5, .legacy-page h6 {
+  color: #333;
+}
+
+.legacy-page section {
+  margin: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Liens */
+.legacy-page a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.legacy-page a:hover {
+  text-decoration: underline;
+}
+
+/* Bouton de retour */
+.legacy-page .btn-about {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.legacy-page .about-button {
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.legacy-page .about-button:hover {
+  background-color: #0056b3;
+}
+
+.about-page h2 {
+  font-size: 1.5em;
+}
+
+.about-page h3, .about-page h4, .about-page h5, .about-page h6 {
+  font-size: 1.3em;
+}
+
+.about-page section {
+  padding: 10px;
+}
+
+.about-page .about-button {
+  padding: 10px;
+}
+
+/*********************** Modal error **************************************/
+#error-message {
+  color: red; 
+}
+
+.modal {
+  display: none; /* Masqué par défaut */
+  position: fixed; /* Reste en place */
+  z-index: 1; /* Au-dessus du contenu */
+  left: 0;
+  top: 0;
+  width: 100%; /* Plein écran */
+  height: 100%; /* Plein écran */
+  overflow: auto; /* Ajoute un défilement si nécessaire */
+  background-color: rgba(0, 0, 0, 0.4); /* Fond noir avec transparence */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto; /* Centré */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%; /* Largeur adaptable */
+  max-width: 500px; /* Largeur maximale */
+  border-radius: 8px; /* Arrondir les coins */
+}
+
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Optionnel : styles pour le texte dans la modale */
+.modal-content h2 {
+  margin: 0; /* Supprime le margin par défaut */
+  text-align: center; /* Centre le texte */
+  font-size: 1.4rem;
+}
+
+
+
+
+/***************************************** news detail page ********************************************/
+.new-page-detail {
+  width: 90%;
+}
+
+
 
 /******************************* footer ************************************/ 
 #map {    
@@ -645,6 +883,29 @@ iframe {
     padding: 0.5rem;
   }
 
+  .legacy-page section {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .legacy-page h2 {
+  font-size: 1.8em;
+  }
+
+  .legacy-page h3, .legacy-page h4, .legacy-page h5, .legacy-page h6 {
+    font-size: 1.5em;
+  }
+
+  .about-page .about-button {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .new-page-detail {
+    width: 100%;
+    padding: 2rem;
+  }
+
 }
 
 
@@ -707,6 +968,14 @@ iframe {
     padding: 0.5rem;
   }
 
+  .about-page {
+    padding: 3rem;
+  }
+
+  .news-section {
+    flex-direction: row;
+  }
+
   /********************** footer ************/
   #map {    
     /*background-color: #60aed1;*/
@@ -716,7 +985,7 @@ iframe {
   
   iframe
   {
-    height: 450px;
+    height: 470px;
     border: 0;
     margin-bottom: -8.3rem;	
   }
@@ -852,6 +1121,18 @@ iframe {
   .home-page section h2 {
     font-size: 32px;
   }
+
+  .membership-form form legend{
+    font-size: 2rem;
+    }
+
+    .membership-form form legend.label-question {
+    font-size: 1.2rem;
+  }
+
+  .about-page {
+    padding: 1rem 7rem 1rem 7rem;
+  }
 }
 
 
@@ -873,3 +1154,5 @@ iframe {
   }
   
 }
+
+

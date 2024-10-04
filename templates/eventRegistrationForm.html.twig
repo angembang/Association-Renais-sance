@@ -4,18 +4,17 @@
 
 {% block stylesheets %} 
     <link rel="stylesheet" href="./assets/css/eventRegistration.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 {% endblock %}
 
 
 {% block main %}
 <section class="eventRegistration-form">
-    <h1>Formulaire d'inscription</h1>
-
-    <!-- Modal -->
-    <div id="registerMessageModal" class="registerModal" style="display:none;">
-        <div class="register-modal-content">
-            <span class="registerClose" onclick="closeModal()">&times;</span>
-            <p id="registerModalContent"></p>
+    <!-- Alert message Modal div -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="error-message"></h2>
         </div>
     </div>
 
@@ -65,6 +64,9 @@
     </form>
 </section>
 {% endblock %}
-{% block scripts %}<script src="./assets/js/eventRegistration.js"></script>{% endblock %}
+{% block scripts %}
+    <script src="./assets/js/eventRegistration.js"></script>
+    <script src="./assets/js/eventRegisterModal.js"></script>
+{% endblock %}
 
 
