@@ -1,0 +1,16 @@
+{% extends "layout.html.twig" %}
+
+{% block main %}
+<section class="error-page">
+    <h2>Une erreur est survenue</h2>
+    <p>Error{{ code }}</p>
+    <p>
+        {% if message is defined %}
+            {{ message }}
+        {% else %}
+            Une erreur inattendue s'est produite. Veuillez réessayer plus tard.
+        {% endif %}
+    </p>
+    <a href="index.php?route=home">Retour à l'accueil</a>
+</section>
+{% endblock %}
