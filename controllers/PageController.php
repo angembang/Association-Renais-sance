@@ -69,16 +69,16 @@ class PageController extends AbstractController
 
 
   /**
-   * Renders the contact page.
+   * Renders the about page.
    *
    * This method is responsible for rendering the contact page view. 
    *
    * @return void
    */
-  public function contactPage(): void
+  public function about(): void
   {
-    // Render the contact page
-    $this->render("contact.html.twig", []);     
+    // Render the about page
+    $this->render("aboutPage.html.twig", []);     
   }
 
 
@@ -93,6 +93,43 @@ class PageController extends AbstractController
   { 
     // Render the news success page
     $this->render("newsSuccess.html.twig", []);     
+  }
+
+
+ /**
+   * Renders the membership success page.
+   *
+   * This method is responsible for rendering the memberships success page view. 
+   *
+   * @return void
+   */
+  public function  membershipSuccess(): void
+  { 
+    $this->render("membershipSuccess.html.twig", []);
+  } 
+
+
+  /**
+   * Renders the event registration success page.
+   *
+   * This method is responsible for rendering the event registration success page view. 
+   *
+   * @return void
+   */
+  public function  eventRegistrationSuccess(): void
+  { 
+    $this->render("eventRegistrationSuccess.html.twig", []);
+  } 
+  
+  
+  /*
+   * cleans the url parameters
+   * 
+   */
+  public function membershipSuccessClean(): void 
+  {
+    // render the success donation page 
+    $this->render("membershipSuccess.html.twig", []);
   }
 
 
@@ -141,7 +178,7 @@ class PageController extends AbstractController
       ]);
 
     } catch (Exception $e) {
-      error_log("An error occurred: " . $e->getMessage());
+      //error_log("An error occurred: " . $e->getMessage());
       http_response_code(500);
       $this->render("errorPage.html.twig", ["code" => 500]);
     }    
@@ -194,7 +231,7 @@ class PageController extends AbstractController
       ]);
 
     } catch (Exception $e) {
-      error_log("An error occurred: " . $e->getMessage());
+      //error_log("An error occurred: " . $e->getMessage());
       http_response_code(500);
       $this->render("errorPage.html.twig", ["code" => 500]);
     }  
@@ -222,6 +259,52 @@ class PageController extends AbstractController
    */
   public function showEventRegistrations(): void
   {     
+  }
+
+
+  /*
+   *
+   *
+   */
+  public function showNewsById(): void 
+  { 
+    try {
+      // Vérifiez si 'news_id' est présent dans l'URL
+      if (!isset($_GET["id"])) {
+        throw new Exception("news_id non spécifié");
+    }
+
+    $newsId = $_GET["id"];
+    $newsManager = new NewsManager();
+    $news = $newsManager->findNewsById($newsId);
+    //error_log("Recherche d'actualité avec ID : " . $newsId);
+
+    if ($news) {
+        $this->render("newsDetail.html.twig", [
+            "news" => $news
+        ]);
+    } else {
+        throw new Exception("news non trouvé");
+    }
+
+    } catch (Exception $e) {
+      //error_log("An error occurred: " . $e->getMessage());
+      http_response_code(500);
+      $this->render("errorPage.html.twig", ["code" => 500]);
+    }  
+  }
+
+
+  /**
+   * Renders the legacy policy page. 
+   *
+   * This method is responsible for rendering the legacy policy page view. 
+   *
+   * @return void
+   */
+  public function legacyPlolicy(): void 
+  {
+    $this->render("legacyPolicy.html.twig", []);
   }
     
 }
