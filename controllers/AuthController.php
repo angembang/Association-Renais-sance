@@ -95,7 +95,7 @@ class AuthController extends AbstractController
 
     } catch (Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -192,7 +192,7 @@ class AuthController extends AbstractController
       
     } catch(Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -283,7 +283,7 @@ class AuthController extends AbstractController
 
     } catch (Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -341,8 +341,7 @@ class AuthController extends AbstractController
           // Initialize CSRFTokenManager and validate the CSRF token from the POST request
           $tokenManager = new CSRFTokenManager();
           if (!$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
-            $this->renderJson(["success" => false, "message" => "Jeton CSRF invalide"]);
-            return;
+            $_SESSION['error_message'] = "Jeton CSRF invalide";
           }
 
           $membershipManager = new MembershipManager();
@@ -353,16 +352,21 @@ class AuthController extends AbstractController
             return;
           }
 
+          // Initialize HTMLPurifier to sanitize and clean user input from harmful HTML content
+          $config = HTMLPurifier_Config::createDefault();
+          $purifier = new HTMLPurifier($config);
+
+          // Sanitize input data
           $idRole = htmlspecialchars($_POST["idRole"]);
           $civility = htmlspecialchars($_POST["civility"]);
           $firstName = htmlspecialchars($_POST["firstName"]);
           $lastName = htmlspecialchars($_POST["lastName"]);
           $email = htmlspecialchars($_POST["email"]);
           $phone = htmlspecialchars($_POST["phone"]);
-          $address = htmlspecialchars($_POST["address"]);
+          $address = $purifier->purify($_POST["address"]);
           $postalCode = htmlspecialchars($_POST["postalCode"]);
           $createdAt = date('Y-m-d H:i:s');
-          $companyName = isset($_POST["companyName"]) ? htmlspecialchars($_POST["companyName"]) : null;
+          $companyName = isset($_POST["companyName"]) ? $purifier->purify($_POST["companyName"]) : null;
           $logo = null; // Initialize logo as null
 
           // Retrieve role name
@@ -394,15 +398,17 @@ class AuthController extends AbstractController
           } else {
             $logo = '/uploads/images/' . basename($_FILES['logo']['name']);
           }
-          }
+          } 
           // Create membership object
-          $membership = new Membership(null, $civility, $idRole, $firstName, $lastName, $email, $phone, $address, $postalCode, $createdAt, $logo, $companyName);
+          $membership = new Membership(null, $civility, $idRole, $firstName, $lastName, $email, $phone, $address, $postalCode, $createdAt, $logo, $companyName, null);
           $createdMembership = $membershipManager->createMembership($membership);
 
           if ($createdMembership) {
-            $this->render("membershipSuccess.html.twig", [
-              "roleName" => $roleName
-            ]);
+            $this->renderJson([
+              "success" => true,
+              "roleName" => $roleName // Vous pouvez ajouter d'autres données si nécessaire
+          ]);
+            
           } else {
             $this->renderJson([
               "success" => false, "message" => "Une erreur s'est produite lors de votre adhésion."]);
@@ -416,7 +422,7 @@ class AuthController extends AbstractController
 
     } catch (Exception $e) {
         // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -431,6 +437,7 @@ class AuthController extends AbstractController
     }
     
   }
+
 
 
   /**
@@ -471,151 +478,174 @@ class AuthController extends AbstractController
       if($_SERVER["REQUEST_METHOD"] !== "POST") {
         $this->renderJson(["success" => false, "message" => "Le formulaire n'est pas soumis par la méthode POST"]);
       }
-      // Check if all required form fields are set and not empty
-      if((!isset($_POST["event_id"]) || empty($_POST["event_id"])) &&
-      (!isset($_POST["is_member"]) || empty($_POST["is_member"]))) {
+      // check if all required fields are set
+      if (!isset($_POST["event_id"]) || empty($_POST["event_id"]) || 
+      !isset($_POST["is_member"]) || empty($_POST["is_member"])) {
         $this->renderJson(["success" => false, "message" => "Veuillez remplir les champs requis"]);
         exit();
       }
-      // Initialize CSRFTokenManager and validate the CSRF token from the POST request
+
+      // Initialize the CSRFTokenManager and validate the CSRF token
       $tokenManager = new CSRFTokenManager();
       if (isset($_POST["csrf-token"]) && !$tokenManager->validateCSRFToken($_POST["csrf-token"])) {
         $this->renderJson(["success" => false, "message" => "Jeton CSRF invalide"]);
         exit();
       }
-      // Instantiate the event registration, event and membership managers 
+
+      // Instanciate neccessary managers
       $eventRegistrationManager = new EventRegistrationManager();
       $eventManager = new EventManager();
       $membershipManager = new MembershipManager();
+
       // Retrieve the event identifier
       $eventId = htmlspecialchars((int)$_POST["event_id"]);
-      // Retrieve the event by ID
       $event = $eventManager->findEventById($eventId);
 
-      // Check if event exists
-      if(!$event) {
-          $this->renderJson(["success" => false, "message" => "Événement non trouvé"]);
-          exit();
+      // Check if the event exits
+      if (!$event) {
+        $this->renderJson(["success" => false, "message" => "Événement non trouvé"]);
+        exit();
       }
 
-      // Retrieve the number of available seats
+      // Retrieve the seats available
       $seatsAvailable = $event->getSeatsAvailable();
-
-      // Retrieve the event registrations for this specific event
       $eventRegistrationsEvent = $eventRegistrationManager->findEventRegistrationsByEventId($eventId);
       $countEventRegistrations = count($eventRegistrationsEvent);
 
-      // Check if seats are available
+      // Check if the are seats availables
       if ($countEventRegistrations >= $seatsAvailable) {
-        $this->renderJson(["success" => false, "message" => "L'événement est complet, aucune place disponible"]);
+          $this->renderJson(["success" => false, "message" => "L'événement est complet, aucune place disponible"]);
         exit();
       }
 
       $registrationDate = new DateTime();
 
-      // Retrieve the is membership value
+      // Retrieve the membership question value
       $isMember = $_POST["is_member"];
-      // Check if is member is true for more validations
-      if($isMember === "true") {
+      if ($isMember === "true") {
         // Check if the email is provided
-        if((!isset($_POST["membership_email"]) || empty($_POST["membership_email"]))) {
+        if (!isset($_POST["membership_email"]) || empty($_POST["membership_email"])) {
           $this->renderJson(["success" => false, "message" => "Veuillez renseigner votre adresse email"]);
+          exit();
         }
+
         // Retrieve and sanitize the email
         $email = htmlspecialchars($_POST["membership_email"]);
-        // Retrieve the membership by email
         $membership = $membershipManager->findMembershipByEmail($email);
-        // Check if the membership is null
-        if(!$membership) {
+
+        // Check if the membership exists
+        if (!$membership) {
           $this->renderJson(["success" => false, "message" => "Le membre avec l'email fourni n'existe pas"]);
+          exit();
         }
-        // Ckeck if the membership with the provided email already register to the event
+
+        // Check if the member with the provided email already exist
         $membershipId = $membership->getId();
         $eventRegistrationMembershipId = $eventRegistrationManager->findEventRegistrationByMembershipId($membershipId);
-        if($eventRegistrationMembershipId) {
-          $this->renderJson(["success" => false, "message" => "le membre avec cet email est déjà enregistré"]);
-          exit();  
-        }  
+        if ($eventRegistrationMembershipId) {
+          $this->renderJson(["success" => false, "message" => "Le membre avec cet email est déjà enregistré"]);
+          exit();
+        }
+
         // Retrieve the first name and last name of the membership
-        
         $membershipFirstName = $membership->getFirstName();
         $membershipLastName = $membership->getLastName();
 
-        // Create a event model registration 
+        // Create an event registration model
         $eventRegistrationModel = new EventRegistration(null, $eventId, $membershipId, $registrationDate, $membershipLastName, $membershipFirstName);
-
         $eventRegistration = $eventRegistrationManager->createEventRegistration($eventRegistrationModel);
-        // Check if the event registration is not created
-        if(!$eventRegistration) {
-          $this->renderJson(["success" => false, "message" => "Echec lors de l'inscription à l'évenement"]);
+
+        // check if the event registration is not created
+        if (!$eventRegistration) {
+          $this->renderJson(["success" => false, "message" => "Échec lors de l'inscription à l'événement"]);
           exit();
         }
+
         // Retrieve the event by its unique identifier
         $event = $eventManager->findEventById($eventId);
-        if(!$event) {
-          $message = "Inscription reussie mais malheureusement, nous n'avons pas pu récupérer les details de l'événement";
-          $this->render("errorPage.html.twig", [
-            "message" => $message
-          ]);
+        if (!$event) {
+          $message = "Inscription réussie mais malheureusement, nous n'avons pas pu récupérer les détails de l'événement";
+          $this->render("errorPage.html.twig", ["message" => $message]);
+          exit();
         }
-        // Render the success event registration page with event details
-        $this->render("eventRegistrationSuccess.html.twig", [
-          'event' => $event
-        ]);
+
+        $eventTitle = $event->getTitle();
+        $eventStartDate = $event->getStartDate();
+        $eventLocation = $event->getLocation();
+        $eventSeatAvailable = $event->getSeatsAvailable();
+        $eventOrganizer = $event->getOrganiser();
+        $this->renderJson([
+          "success" => true,
+          "event" => $event,
+          "eventTitle" => $eventTitle,
+          "eventStartDate" => $eventStartDate,
+          "eventLocation" => $eventLocation,
+          "eventSeatAvailable" => $eventSeatAvailable,
+          "eventOrganizer" => $eventOrganizer
+      ]);
 
       } else {
-          // Check if the first name and last name are not set
-          if((!isset($_POST["firstName"]) || empty($_POST["firstName"])) &&
-          (!isset($_POST["lastName"]) || empty($_POST["lastName"]))) {
-            $this->renderJson(["success" => false, "message" => "Veuillez renseigner le nom et prénom"]); 
-          }
-          // Retrieve and sanitize the first name and last name input data
-          $firstName = htmlspecialchars($_POST["firstName"]);
-          $lastName = htmlspecialchars($_POST["lastName"]);
+        // Check if the first name and last name is not provided
+        if (!isset($_POST["firstName"]) || empty($_POST["firstName"]) || 
+          !isset($_POST["lastName"]) || empty($_POST["lastName"])) {
+          $this->renderJson(["success" => false, "message" => "Veuillez renseigner le nom et prénom"]); 
+          exit();
+        }
 
-          // Create a event register object
-          $eventRegistrationModel = new EventRegistration(null, $eventId, null, $registrationDate, $lastName, $firstName);
+        // Retrive and santize the first name and the last name
+        $firstName = htmlspecialchars($_POST["firstName"]);
+        $lastName = htmlspecialchars($_POST["lastName"]);
 
-          // Persists the event registration to the database
-          $eventRegistration = $eventRegistrationManager->createEventRegistration($eventRegistrationModel);
+        // Create an event registration object
+        $eventRegistrationModel = new EventRegistration(null, $eventId, null, $registrationDate, $lastName, $firstName);
+        $eventRegistration = $eventRegistrationManager->createEventRegistration($eventRegistrationModel);
 
-          // Check if the event registration is not persisted
-          if(!$eventRegistration) {
-            $this->renderJson(["success" => false, "message" => "Echec lors de l'inscription à l'évenement"]); 
-            exit(); 
-          }
-          // Retrieve the event by its unique identifier
-          $event = $eventManager->findEventById($eventId);
-          if(!$event) {
-            $message = "Inscription reussie mais malheureusement, nous n'avons pas pu récupérer les details de l'événement";
-            $this->render("errorPage.html.twig", [
-              "message" => $message
-            ]);
-          }
-          // Render the success event registration page with event details
-          $this->render("eventRegistrationSuccess.html.twig", [
-            'event' => $event
-          ]);
-      }
-      
-    } catch (Exception $e) {
-      // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
-      // Capture the error code for the error page
-      $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
-     
-      // Set the HTTP response code for better error handling
-      http_response_code($code);
+        // check if the event registration is not persist
+        if (!$eventRegistration) {
+          $this->renderJson(["success" => false, "message" => "Échec lors de l'inscription à l'événement"]); 
+          exit(); 
+        }
 
-      // Render an error page with the error details
-      $this->render("errorPage.html.twig", [
-        "code" => $code,
+        // Retrieve the event by its identifier
+        $event = $eventManager->findEventById($eventId);
+        if (!$event) {
+          $message = "Inscription réussie mais malheureusement, nous n'avons pas pu récupérer les détails de l'événement";
+          $this->render("errorPage.html.twig", ["message" => $message]);
+          exit();
+        }
+
+        // Render the succes page
+        $eventTitle = $event->getTitle();
+        $eventStartDate = $event->getStartDate();
+        $eventLocation = $event->getLocation();
+        $eventSeatAvailable = $event->getSeatsAvailable();
+        $eventOrganizer = $event->getOrganiser();
+        $this->renderJson([
+          "success" => true,
+          "event" => $event,
+          "eventTitle" => $eventTitle,
+          "eventStartDate" => $eventStartDate,
+          "eventLocation" => $eventLocation,
+          "eventSeatAvailable" => $eventSeatAvailable,
+          "eventOrganizer" => $eventOrganizer
       ]);
-      exit();
+      }
+
+    } catch (Exception $e) {
+    // log the error for debug
+    //error_log("Une erreur s'est produite lors de l'opération: " . $e->getMessage() . " dans " . $e->getFile() . " à la ligne " . $e->getLine());
+  
+    // Capture the error code for display the error page
+    $code = $e->getCode() ? $e->getCode() : 500; // Par défaut à 500 si aucun code n'est fourni
+  
+    // Défine the http code response for better manage of the error
+    http_response_code($code);
+  
+    // Render the error page with detailes
+    $this->render("errorPage.html.twig", ["code" => $code]);
+    exit();
     }
-
   }
-
 
   /**
    * Displays the event form
@@ -767,7 +797,7 @@ class AuthController extends AbstractController
       }
 
     } catch (Exception $e) {
-      error_log("An error occurred: " . $e->getMessage());
+      //error_log("An error occurred: " . $e->getMessage());
       http_response_code(500);
       $this->render("errorPage.html.twig", ["code" => 500]);
     }
@@ -893,7 +923,7 @@ class AuthController extends AbstractController
 
     } catch (Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -968,7 +998,7 @@ class AuthController extends AbstractController
 
     } catch (Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
@@ -989,6 +1019,13 @@ class AuthController extends AbstractController
    */
   public function logout() : void
   {
+    if (session_status() === PHP_SESSION_NONE) {
+      session_start();
+    }
+    $_SESSION = [];
+    session_destroy();
+    header("Location: /home"); 
+    exit();
   }
   
 }

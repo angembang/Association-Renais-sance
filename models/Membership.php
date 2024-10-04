@@ -65,6 +65,11 @@ class Membership
    * @var string|null the company name of the membership. Null if not provided.
    */
   private ?string $companyName;
+
+   /**
+   * @var float|null the membership fee of the membership. Null if not provided.
+   */
+  private ?float $membershipFee;
   
 
   /**
@@ -81,9 +86,10 @@ class Membership
    * @param string $createdAt The membership created date.
    * @param string|null $logo the logo of the membership. Null if not provided.
    * @param string|null $companyName the company name of the membership. Null if not provided.
+   * @param float|null $membershipFee the membership fee of the membership. Null if not provided.
    *
    */
-  public function __construct(?int $id, string $civility, int $roleId, string $firstName, string $lastName, string $email, string $phone, string $address, string $postalCode, string $createdAt,?string $logo, ?string $companyName)
+  public function __construct(?int $id, string $civility, int $roleId, string $firstName, string $lastName, string $email, string $phone, string $address, string $postalCode, string $createdAt,?string $logo, ?string $companyName, ?float $membershipFee)
   {
     $this->id = $id;
     $this->civility = $civility;
@@ -97,6 +103,7 @@ class Membership
     $this->createdAt = $createdAt;
     $this->logo = $logo;
     $this->companyName = $companyName;
+    $this->membershipFee = $membershipFee; 
     
   }
 
@@ -303,7 +310,7 @@ class Membership
 
 
   /**
-   * Get the civility of the membership
+   * Get the logo of the membership
    * 
    * @return string|null The logo of the membership. Null if not provided. 
    */
@@ -314,7 +321,7 @@ class Membership
   
   /**
    * Set the logo of the membership.
-   * @param ?string $logo The civility of the membership. 
+   * @param ?string $logo The logo of the membership. 
    */
   public function setLogo(?string $logo): void 
   {
@@ -340,5 +347,23 @@ class Membership
     $this->companyName = $companyName;
   }
 
+
+  /**
+   * Get the membership fee of the membership
+   * @return string|null The company name of the membership. Null if not provided. 
+   */
+  public function getMembershipFee(): ?float
+  {
+    return $this->membershipFee;
+  }
+  
+  /**
+   * Set the membership fee of the membership.
+   * @param ?float $membershipFee The membership fee  of the membership. 
+   */
+  public function setMembershipFee(?float $membershipfee): void 
+  {
+    $this->membershipFee = $membershipfee;
+  }
 
 }

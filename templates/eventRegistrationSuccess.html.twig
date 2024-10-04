@@ -3,20 +3,41 @@
 {% block title %}Inscription Réussie{% endblock %}
 
 {% block main %}
-    <section class="container">
-          <h2>Inscription Réussie</h2>
-          <p>Merci pour votre inscription à {{event.title}}.</p>
-          <p>
-              Nous sommes ravis de vous compter parmi les participants à cet événement ! Si vous avez des questions ou besoin d'informations supplémentaires, n'hésitez pas à nous <a href="index.php?route=contact">contacter</a>. Nous sommes là pour vous aider
-          </p>
+    <div class="success-message" id="successMessage">
+        <p id="eventSpecificMessage"></p>
+        <p>Nous vous remercions de votre intérêt pour cet événement. Votre demande de participation est actuellement à l'étude et nous reviendrons vers vous dans un bref délai pour vous informer de la suite. Si vous avez des questions ou besoin d'informations supplémentaires, n'hésitez pas à nous contacter au <a href="tel:+33605678513">0605678513</a></p>
+        <p>Nous sommes là pour vous aider.</p>
 
-          <!-- Display Event Details -->
-          <h3>Pour rappel : </h3>
-          <p><strong>Nom de l'Événement :</strong> {{ event.name }}</p>
-          <p><strong>Date :</strong> {{ event.startDate|date('d/m/Y') }}</p>
-          <p><strong>Lieu :</strong> {{ event.location }}</p>
+        <!-- Display Event Details -->
+        <h3>Pour rappel :</h3>
+        <p><strong>Nom de l'Événement :</strong> <span id="eventTitle"></span></p>
+        <p><strong>Date :</strong> <span id="eventDate"></span></p>
+        <p><strong>Lieu :</strong> <span id="eventLocation"></span></p>
 
-          <!-- Link back to the homepage -->
-          <a href="index.php?route=home" class="btn btn-primary">Retour à la page d'accueil</a>
-    </section>
+        <!-- Link back to the homepage -->
+        <a href="index.php?route=home" class="button">Retour à la page d'accueil</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const eventDetails = JSON.parse(localStorage.getItem("eventDetails"));
+            const eventSpecificMessage = document.getElementById("eventSpecificMessage");
+            const eventTitleElement = document.getElementById("eventTitle");
+            const eventDateElement = document.getElementById("eventDate");
+            const eventLocationElement = document.getElementById("eventLocation");
+
+            if (eventDetails) {
+                eventTitleElement.textContent = eventDetails.title;
+                eventDateElement.textContent = new Date(eventDetails.startDate.date).toLocaleDateString(); 
+                eventLocationElement.textContent = eventDetails.location;
+
+                eventSpecificMessage.textContent = "Merci pour votre demande d'inscription à cet événement.";
+            } else {
+                eventSpecificMessage.textContent = "Une erreur est survenue. Les détails de l'événement ne sont pas disponibles.";
+            }
+            console.log(eventDetails);
+            // Nettoyez les détails de l'événement après utilisation
+            localStorage.removeItem("eventDetails");
+        });
+    </script>
 {% endblock %}
