@@ -60,6 +60,10 @@ class Router
           $authController->checkMembershipRegister(); 
           break;
 
+        case "membership-success":
+          $pageController->membershipSuccess(); 
+          break;
+
         case "show-membership":
           $pageController->showMemberships(); 
           break;
@@ -83,7 +87,10 @@ class Router
         case "check-event-registration":
           $authController->checkEventRegistration(); 
           break;
-
+          
+        case "event-registration-success":
+          $pageController->eventRegistrationSuccess(); 
+          break;
         case "show-event-registration":
           $pageController->showEventRegistrations(); 
           break;
@@ -103,23 +110,23 @@ class Router
         case "show-news":
           $pageController->showNews(); 
           break;
+        
+        case "news-detail":
+          $pageController->showNewsById(); 
+          break;
 
         case "donation":
           $donationController->showdonationForm(); 
           break;
 
-        case "create-paiement-stripe":
+        case "create-helloasso":
           // Route for displaying a stripe paiement 
-          $donationController->createStripe();
+          $donationController->createHelloAsso();
           break;
 
         case "donation-success":
           // Route for displaying a stripe paiement
           $donationController->donationSuccess();
-          break;
-
-        case "donation-success-clean":
-          $donationController->donationSuccessClean();
           break;
 
         case "show-donations":
@@ -130,12 +137,16 @@ class Router
           $pageController->errorPage();    
           break;
 
-        case "contact":
-          $pageController->contactPage();    
-          break;
-
         case "check-contact-form":
           $authController->checkContactForm();    
+          break;
+
+        case "about":
+          $pageController->about();    
+          break;
+
+        case "legacy-policy":
+          $pageController->legacyPlolicy();    
           break;
                               
         case "logout":
