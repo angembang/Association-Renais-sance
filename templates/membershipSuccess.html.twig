@@ -1,20 +1,31 @@
 {% extends "layout.html.twig" %}
 
 {% block main %}
-    <div class="success-message">
-        {% if roleName == "Partenaire" %}
-            <p>Votre demande de partenariat est en cours de traitement. Merci pour votre intérêt !</p>
-        {% elseif roleName == "Bénévole" %}
-            <p>Adhésion réussie ! Vous êtes désormais bénévole de l'association Renais'sance. Merci pour votre engagement !</p>
-            {% elseif roleName == "Membre associé" %}
-            <p>Bienvenue en tant que membre associé ! Nous sommes ravis de vous avoir parmi nous.</p>
-        {% elseif roleName == "membre d'honneur" %}
-            <p>Félicitations ! Vous êtes désormais membre d'honneur de l'association Renais'sance. Merci pour votre soutien exceptionnel !</p>
-        {% else %}
-            <p>Merci pour votre adhésion !</p>
-        {% endif %}
-        
+    <div class="success-message" id="successMessage">
+        <p id="roleSpecificMessage"></p>
         <p>Nous vous contacterons bientôt pour les prochaines étapes.</p>
         <a href="index.php?route=home" class="button">Retour à l'accueil</a>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const roleName = localStorage.getItem("roleName");
+            const roleSpecificMessage = document.getElementById("roleSpecificMessage");
+
+            if (roleName === "Partenaire") {
+                roleSpecificMessage.textContent = "Votre demande de partenariat est en cours de traitement. Merci pour votre intérêt !";
+            } else if (roleName === "Bénévole") {
+                roleSpecificMessage.textContent = "Adhésion réussie ! Vous êtes désormais bénévole de l'association Renais'sance. Merci pour votre engagement !";
+            } else if (roleName === "Membre associé") {
+                roleSpecificMessage.textContent = "Bienvenue en tant que membre associé ! Nous sommes ravis de vous avoir parmi nous.";
+            } else if (roleName === "membre d'honneur") {
+                roleSpecificMessage.textContent = "Félicitations ! Vous êtes désormais membre d'honneur de l'association Renais'sance. Merci pour votre soutien exceptionnel !";
+            } else {
+                roleSpecificMessage.textContent = "Adhésion réussie ! Vous êtes désormais membre de l'association Renais'sance. Merci pour votre engagement !";
+            }
+
+            // Nettoyez le rôle après utilisation
+            localStorage.removeItem("roleName");
+        });
+    </script>
 {% endblock %}

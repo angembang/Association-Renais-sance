@@ -10,11 +10,11 @@
 
 {% block main %}
     <div class="membership-form">
-        <!-- Modal -->
-        <div id="registerMessageModal" class="registerModal" style="display:none;">
-            <div class="register-modal-content">
-                <span class="registerClose" onclick="closeModal()">&times;</span>
-                <p id="registerModalContent"></p>
+        <!-- Alert message Modal div -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="error-message"></h2>
             </div>
         </div>
 
@@ -97,6 +97,36 @@
                     <label for="logo">Logo :</label>
                     <input type="file" id="logo" name="logo" accept="image/*">
                 </fieldset>
+
+                <!-- Payment question -->
+            <!--   <fieldset class="paymentQuestionField" id="paymentQuestionField" style="display: none;">
+                    <legend class="label-question">Souhaitez-vous régler le frais d'adhésion dès maintenant ?</legend>
+                    <select id="payNow" name="payNow" required onchange="toggleMembershipFee()">
+                        <option value="" disabled selected>Choisissez une option</option>
+                        <option id ="paiement-yes" value="yes">Oui</option>
+                        <option value="no">Non</option>
+                    </select>
+                </fieldset>
+
+                <fieldset class="payment-option" id="payment-option" style="display: none;"> --> 
+                    <!-- Membership Fee field (hidden initially) -->
+            <!--    <fieldset class="membershipFeeField" id="membershipFeeField">
+                        <legend class="label-question">Frais d'adhésion :</legend>
+                        <label for="membershipFee" class="label-question">Frais d'adhésion :</label>
+                        <input type="number" id="membershipFee" name="membershipFee" value="10" readonly required>
+                        <span>€</span>
+                    </fieldset>
+
+                    <div id="payment-element" >-->
+                        <!--Stripe.js injects the Payment Element-->
+                <!--</div>
+                
+                    <button id="submit" disabled="disabled">
+                        <div class="spinner hidden" id="spinner"></div>
+                        <span id="button-text">Payer le frais d'adhésion</span>
+                    </button>
+                    <div id="payment-message" class="hidden"></div>
+                </fieldset>--> 
             
                 <!-- Registration button -->
                 <button type="submit" id="submitButton">Adhérer</button>
@@ -108,4 +138,8 @@
 
 {% endblock %}
 
-{% block scripts %}<script src="./assets/js/membership.js"></script>{% endblock %} 
+{% block scripts %}
+    <script src="./assets/js/membership.js"></script>
+    <!--<script src="./assets/js/membershipFeeCheckout.js"></script>-->
+    <script src="./assets/js/error.js"></script>
+{% endblock %} 
