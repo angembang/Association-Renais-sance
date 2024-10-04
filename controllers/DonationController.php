@@ -8,51 +8,20 @@
 class DonationController extends AbstractController
 {
   /**
-   * Creates a Stripe payment intent and returns the client secret.
-   * This method retrieves the payment amount from the JSON payload, creates a payment intent
-   * with the specified amount and currency using the Stripe API, and then returns the client secret
-   * required for completing the payment on the client side.
+   * Initializes a payment request with HelloAsso and returns the redirect URL.
+   * This method retrieves the payment details from the JSON payload, prepares
+   * a request to the HelloAsso API to create a checkout intent, and returns
+   * the URL for the contributor to complete the payment.
    * 
    * @return void
    */
-  public function createStripe(): void 
+  public function createHelloAsso(): void 
   {
-    // Retrieve the Stripe secret key from .env file
-    $key = $_ENV['API_KEY'];
-
-    // Create an instance of stripe client
-    $stripe = new \Stripe\StripeClient($key);
-
-    // Set the response content type to JSON
-    header('Content-Type: application/json');
-
-    try {
-      // Retrieve the raw JSON input from the request body
-      $jsonStr = file_get_contents('php://input');
-      // Decode the JSON input into an associative array/object
-      $jsonObj = json_decode($jsonStr);
-
-      // Create a Stripe payment intent with the amount and currency provided
-      $paymentIntent = $stripe->paymentIntents->create([
-        'amount' => $jsonObj->amount * 100, // The amount in cents (e.g., 10.00 EUR is represented as 1000 cents)
-        'currency' => 'eur', // The currency for the payment (euro)
-      ]);
-
-      // Prepare the response containing the client secret
-      $output = [
-        'clientSecret' => $paymentIntent->client_secret
-      ];
-      // Send the client secret as a JSON response
-      echo json_encode($output);
-
-    } catch (\Stripe\Exception\ApiErrorException $e) {
-      // Handle any errors that occur during the API request to Stripe
-      http_response_code(500); // Set HTTP status code to 500 (Internal Server Error)
-      echo json_encode(['error' => $e->getMessage()]); // Send the error message as a JSON response
-    }
+    $helloAssoAPI = new HelloAssoAPI();
+    $helloAssoAPI->paymentHelloAsso();
   }
 
-
+  
   /*
    * Displays the donation form
    * 
@@ -84,58 +53,34 @@ class DonationController extends AbstractController
   {
     try {
       // Retrieve the redirection parameters
-      $paymentIntentId = $_GET["payment_intent"] ?? null;
-      $anonymous = isset($_GET["anonymous"]) ? filter_var($_GET["anonymous"], FILTER_VALIDATE_BOOLEAN) : false;
-      $isMember = isset($_GET["is_member"]) ? filter_var($_GET["is_member"], FILTER_VALIDATE_BOOLEAN) : false;
-      $membershipEmail  = isset($_GET["membership_email"]) ? urldecode($_GET["membership_email"]) : null;
-      $firstName = isset($_GET["firstName"]) ? urldecode($_GET["firstName"]) : null;
-      $lastName = isset($_GET["lastName"]) ? urldecode($_GET["lastName"]) : null;
-      $message = isset($_GET["message"]) ? urldecode($_GET["message"]) : null;
-      $amount = isset($_GET["montant-personnalise"]) ? urldecode($_GET["montant-personnalise"]) : null;
+      $checkoutIntentId = $_GET["checkoutIntentId"] ?? null; // ID for the HelloAsso checkout
+      $code = $_GET["code"] ?? null; // Payment status code
+      $amount = $_SESSION['donation-form']['amount'] ?? null; // Amount should be stored in the session
+        $anonymous = $_SESSION['donation-form']['anonymous'] ?? false; // Anonymous flag
+        $isMember = $_SESSION['donation-form']['is_member'] ?? false; // Member flag
+        $membershipEmail = $_SESSION['donation-form']['membershipEmail'] ?? null; // Membership email
+        $firstName = $_SESSION['donation-form']['firstName'] ?? null; // Payer's first name
+        $lastName = $_SESSION['donation-form']['lastName'] ?? null; // Payer's last name
+        $message = $_SESSION['donation-form']['message'] ?? null; // Donation message
 
-      // Validate amount
+      // Validate payment status
+      if ($code !== "succeeded") {
+        throw new Exception("Payment was not successful.");
+      }
+
+      // Validate the amount
       if (!is_numeric($amount)) {
         throw new Exception("Invalid amount.");
       }
-
-      // Store the retrieved parameters in the session
-      $_SESSION['donation-form'] = [
-        "Payment Intent ID" => $paymentIntentId,
-        "anonymous" => $anonymous,
-        "is_member" => $isMember,
-        "membershipEmail" => $membershipEmail,
-        "firstName" => $firstName,
-        "lastName" => $lastName,
-        "message" => $message,
-        "amount" => $amount
-      ];
-
-      // Validate paymentIntentId
-      if (!$paymentIntentId) {
-        throw new Exception("Missing payment intent ID.");
-      }
-
-       // Validate email format only if the user is a member and provides an email
-       if ($isMember && $membershipEmail && !filter_var($membershipEmail, FILTER_VALIDATE_EMAIL)) {
+      // If the user is a member and provides an email, validate the email format
+      if ($isMember && $membershipEmail && !filter_var($membershipEmail, FILTER_VALIDATE_EMAIL)) {
         throw new Exception("Invalid email format.");
-      }
-
-      // Check the payment status
-      try {
-        $stripe = new \Stripe\StripeClient($_ENV["API_KEY"]);
-        $paymentIntent = $stripe->paymentIntents->retrieve($paymentIntentId);
-      } catch (\Stripe\Exception\ApiErrorException $e) {
-        throw new Exception("Error with payment: " . $e->getMessage());
-      }
-
-      if ($paymentIntent->status !== "succeeded") {
-        throw new Exception("Payment did not succeed.");
       }
 
       // Create donation and persist it to the database
       $createdAt = new DateTime();
-      $amount = (float)$amount;
-      $anonymous = ($anonymous === true) ? 1 : 0;
+      $amount = (float)$amount; // Convert amount to float
+      $anonymous = ($anonymous === true) ? 1 : 0; // Convert boolean to int
 
       // If the user is a member and provides an email, find membership by email
       $membershipId = null;
@@ -155,27 +100,17 @@ class DonationController extends AbstractController
 
       // Clear session data for security reasons
       unset($_SESSION['donation-form']);
-      unset($_SESSION['donation']);
 
       // Redirect to a clean URL
       $this->render("donationSuccess.html.twig", []);
       exit();
     } catch (Exception $e) {
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
-      header("Location: index.php?route=error-page");
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+     $this->render("errorPage.html.twig", [
+      "code" => $e->getCode()
+     ]);
       exit();
     }
-  }
-
-
-  /*
-   * cleans the url parameters
-   * 
-   */
-  public function donationSuccessClean(): void 
-  {
-    // render the success donation page 
-    $this->render("donationSuccess.html.twig", []);
   }
 
 
@@ -212,8 +147,8 @@ class DonationController extends AbstractController
         }
       }
       // Debug : var_dump pour vérifier les données
-      dump($donations);
-      dump($members);
+      //dump($donations);
+      //dump($members);
       //die(); // Stopper l'exécution pour voir le contenu
 
       // Render the donation page with neccessary data
@@ -224,7 +159,7 @@ class DonationController extends AbstractController
 
     } catch (Exception $e) {
       // Log the error details for debugging
-      error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
+      //error_log("An error occurred during the operation: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine(). $e->getCode());
       // Capture the error message and code for the error page
       $code = $e->getCode() ? $e->getCode() : 500; // Default to 500 if no code is provided;
      
