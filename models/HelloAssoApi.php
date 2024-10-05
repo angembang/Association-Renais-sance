@@ -3,8 +3,8 @@
 class HelloAssoAPI
 {
   // Private variables to store API credentials and organization slug
-  private $clientId = 'a70865bc2ece45d4aafc37776e61c8be';
-  private $clientSecret = 'lWMKzLzMDl15xbNVwYiCuft3SP2aMN9z'; 
+  private $clientId = 'dddddddddddddddddddddddddddddddddddd';
+  private $clientSecret = 'rrrrrrrrrrrrrrrrrrrrrrrrr'; 
   private $organizationSlug = 'association-renais-sance'; 
   private $apiKey;
 
