@@ -162,6 +162,8 @@ class AuthController extends AbstractController
   
                 // Check if the role is Admin
                 if ($roleName === "Admin") {
+                  // Store the user's identifier in the session
+                  $_SESSION["user"] = $user->getId();
                   // Redirect to the admin page
                   $this->render("adminHome.html.twig", []);
                   return;

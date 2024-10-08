@@ -49,6 +49,35 @@ class PageController extends AbstractController
    */
   public function adminHome(): void
   {
+    // Check if the user is logged in and is an admin
+    if (!isset($_SESSION["user"])) {
+      header('home.html.twig'); // Redirect to the home page
+      exit;
+    }
+    // Retrieve the member identifier
+    $membershipId = $_SESSION["user"];
+    
+    // Instantiate the membership manager to retrieve the member by its unique identifier
+    $membershipManager = new MembershipManager();
+    $membership = $membershipManager ->findMembershipById($membershipId);
+    
+    // Check if no member is found
+    if(!$membership) {
+      header('home.html.twig'); // Redirect to the home page
+      exit;  
+    }
+    // Retrieve the role of the member
+    $membershipIdRole = $membership->getRoleId();
+    
+    // Instantiate the role manager to retrieve role by its identifier
+    $roleManager = new RoleManager();
+    $role = $roleManager->findRoleById($membershipIdRole);
+     
+    // Check if the role is not Admin
+     if($role !== "Admin") {
+      header('home.html.twig'); // Redirect to the home page
+      exit;   
+    }
     // Render the home page
     $this->render("adminHome.html.twig", []);     
   }
