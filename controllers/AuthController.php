@@ -408,7 +408,7 @@ class AuthController extends AbstractController
           if ($createdMembership) {
             $this->renderJson([
               "success" => true,
-              "roleName" => $roleName // Vous pouvez ajouter d'autres données si nécessaire
+              "roleName" => $roleName 
           ]);
             
           } else {
